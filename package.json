@@ -13,6 +13,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@kangc/v-md-editor": "^2.3.18",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
