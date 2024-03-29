@@ -1,31 +1,68 @@
 <template>
   <div class="demo">
-    <h1>DMP代码生成</h1>
-    <v-md-preview :text="text" height="400px"></v-md-preview>
-    <v-md-preview :text="text2" height="400px"></v-md-preview>
+    <h1>DMP模块代码生成</h1>
+    <div class="step-0">
+      <Space direction="vertical" class="left">
+        <Space>
+          <label>请输入模块名称(CamelCase)</label>
+          <Input v-model:value="moduleName" @change="changeModuleName" />
+        </Space>
+        <Space>
+          <label>请输入表格信息</label>
+          <Textarea v-model:value="tableValue" @change="changeTableValue" />
+        </Space>
+      </Space>
+      <details>
+        <summary>查看输入详情</summary>
+        <h2>{{ moduleName }}</h2>
+        <v-md-preview :text="tableValue" height="400px"></v-md-preview>
+      </details>
+    </div>
+    <div class="steps">
+      <GenerateSteps :module-name="moduleName" :table-value="tableValue" />
+    </div>
+    <!--    <Button>Add</Button>-->
+    <!--    <Switch v-model:checked="checked" />-->
+    <!--    <v-md-preview :text="text" height="400px"></v-md-preview>-->
+    <!--    <highlightjs language="typescript" :code="code" />-->
   </div>
 </template>
 <script setup lang="ts">
+import GenerateSteps from '@/views/ai/GenerateSteps.vue';
 import { ref } from 'vue';
-
-const text = ref(
-  '| 字段field                   | 字段名称         | 列表展示 | 检索展示 |\n' +
-    '|---------------------------|--------------|------|------|\n' +
-    '| translational_medicine_id | 转化医学ID       | Yes  | Yes  |\n' +
-    '| ct_result_id              | 临床结果ID       | Yes  | Yes  |\n' +
-    '| title                     | 标题           | Yes  | Yes  |\n' +
-    '| title_translation         | 标题翻译         | No   | No   |\n' +
-    '| source_code               | 来源code       | No   | Yes  |\n'
-);
-
-const text2 = ref('const a = 6');
+import { Textarea, Space } from 'ant-design-vue';
+const moduleName = ref('');
+const tableValue = ref('');
+const changeModuleName = (e: any) => {
+  moduleName.value = e.target.value;
+};
+const changeTableValue = (e: any) => {
+  tableValue.value = e.target.value;
+};
+const text = ref('');
+const code = ref('');
 </script>
 
 <style>
 @media (min-width: 1024px) {
   .demo {
-    min-height: 100vh;
-    text-align: center;
+    height: 100%;
+    h1,
+    h2 {
+      text-align: center;
+    }
+    .step-0 {
+      display: flex;
+      gap: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #f0f0f0;
+      .left {
+        width: 30%;
+      }
+    }
+    .steps {
+      margin-top: 32px;
+    }
   }
 }
 </style>
