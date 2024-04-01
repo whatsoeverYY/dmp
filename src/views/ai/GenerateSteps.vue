@@ -24,6 +24,9 @@
         >开始生成</Button
       >
     </div>
+    <div class="result" v-if="returnResult[String(current)]">
+      <highlightjs language="typescript" :code="returnResult[String(current)]" />
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -40,16 +43,25 @@ const initial = (str: string) => {
 const deInitial = (str: string) => {
   return str.charAt(0).toLowerCase() + str.slice(1);
 };
+const replaceStr = (str: string) => {
+  return str.replace('\\n', '\n');
+};
 const current = ref<number>(0);
 const variablePrompt = computed(() => `name=${props.moduleName}`);
-const returnResult = ref({});
+const returnResult = ref<Record<string, any>>({});
 const items = ref([
   {
     key: 'step1',
     title: '生成类型定义',
     fileName: () => `${props.moduleName}Type.ts`,
     filePath: () => `/types/${props.moduleName}Type.ts`,
-    prompt: () => `${typePrompt}${variablePrompt.value}\n${props.tableValue}`
+    prompt: () => {
+      if (!props.tableValue) {
+        alert('请填写列表字段表格信息');
+        return '';
+      }
+      return `${typePrompt}${variablePrompt.value}\n${props.tableValue}`;
+    }
   },
   {
     key: 'step2',
@@ -64,23 +76,25 @@ const items = ref([
     filePath: () => `/domains/${deInitial(props.moduleName)}Domain/enum.ts`
   }
 ]);
-const generate = (prompt: () => string) => {
-  console.log('Type', prompt());
-  // fetch('http://rd-gateway.patsnap.info/compute/openai_chatgpt_turbo', {
-  //   method: 'POST',
-  //   headers: {
-  //     Authorization: 'Basic Y2hlbnlpbnlpbmc6eURWMlh1eXVCM1VjSlhEdXVhM3hFaA=='
-  //   },
-  //   body: JSON.stringify({ message: prompt })
-  // })
-  //   .then((response) => response.json())
-  //   .then((data) => {
-  //     console.log('Success:', data);
-  //     returnResult.value = {
-  //       ...returnResult.value,
-  //       [current.value]: data
-  //     };
-  //   });
+const generate = (gebPrompt?: () => string) => {
+  const prompt = gebPrompt?.();
+  if (!prompt) {
+    alert('未正确定义prompt，请检查');
+  }
+  fetch('http://rd-gateway.patsnap.info/compute/openai_chatgpt_turbo', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic Y2hlbnlpbnlpbmc6eURWMlh1eXVCM1VjSlhEdXVhM3hFaA=='
+    },
+    body: JSON.stringify({ message: prompt })
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      returnResult.value = {
+        ...returnResult.value,
+        [String(current.value)]: data.data.message
+      };
+    });
 };
 </script>
 
