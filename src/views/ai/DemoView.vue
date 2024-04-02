@@ -47,18 +47,19 @@
       </Space>
     </div>
     <div class="steps">
-      <GenerateSteps :module-name="moduleName" :table-value="tableValue" />
+      <GenerateSteps
+        :module-name="moduleName"
+        :table-value="tableValue"
+        :detail-value="detailValue"
+        :search-value="searchValue"
+      />
     </div>
-    <!--    <Button>Add</Button>-->
-    <!--    <Switch v-model:checked="checked" />-->
-    <!--    <v-md-preview :text="text" height="400px"></v-md-preview>-->
-    <!--    <highlightjs language="typescript" :code="code" />-->
   </div>
 </template>
 <script setup lang="ts">
 import GenerateSteps from '@/views/ai/GenerateSteps.vue';
 import { ref } from 'vue';
-import { Textarea, Space, Select } from 'ant-design-vue';
+import { Textarea, Space } from 'ant-design-vue';
 const moduleName = ref('');
 const tableValue = ref('');
 const searchValue = ref('');

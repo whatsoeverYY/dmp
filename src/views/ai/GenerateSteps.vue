@@ -18,24 +18,45 @@
       </div>
       <Button
         class="generate-content-info"
-        :disabled="!moduleName || !tableValue"
+        :disabled="!moduleName"
         type="primary"
-        @click="() => generate(items[current].prompt)"
+        @click="() => openPromptModal(items[current].promptGenerator)"
+        >查看完整prompt</Button
+      >
+      <Button
+        class="generate-content-info"
+        :disabled="!moduleName"
+        type="primary"
+        @click="() => generate(items[current].promptGenerator)"
         >开始生成</Button
+      >
+      <Button
+        :disabled="!returnResult[String(current)]"
+        class="generate-content-info"
+        type="primary"
+        @click="() => downloadFile(current, items[current].fileName?.())"
+        >下载文件</Button
       >
     </div>
     <div class="result" v-if="returnResult[String(current)]">
       <highlightjs language="typescript" :code="returnResult[String(current)]" />
     </div>
+    <Modal wrapClassName="prompt-modal" v-model:open="modalVisible" title="查看完整prompt">
+      <p class="prompt-modal-info">{{ items[current].promptGenerator?.().join('\n\n') }}</p>
+    </Modal>
   </div>
 </template>
 <script setup lang="ts">
-import { typePrompt } from '@/views/ai/constants';
-import { Steps, Button, Space } from 'ant-design-vue';
+import { entityPrompts } from '@/views/ai/prompts/entityPrompts';
+import { typePrompt } from '@/views/ai/prompts/typePrompts';
+import { Steps, Button, Space, Modal } from 'ant-design-vue';
+import { isArray } from 'ant-design-vue/es/_util/util';
 import { ref, computed } from 'vue';
 const props = defineProps<{
   moduleName: string;
   tableValue: string;
+  searchValue: string;
+  detailValue: string;
 }>();
 const initial = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -47,27 +68,66 @@ const replaceStr = (str: string) => {
   return str.replace('\\n', '\n');
 };
 const current = ref<number>(0);
+const modalVisible = ref(false);
 const variablePrompt = computed(() => `name=${props.moduleName}`);
-const returnResult = ref<Record<string, any>>({});
+const returnResult = ref<Record<string, string>>({});
+const getTablePrompt = (type: string) => {
+  let resTable = '';
+  if (type === 'table') {
+    resTable = props.tableValue;
+  }
+  if (type === 'search') {
+    resTable = props.searchValue;
+  }
+  if (type === 'detail') {
+    resTable = props.detailValue;
+  }
+  return `\n\n${resTable}`;
+};
 const items = ref([
   {
     key: 'step1',
     title: '生成类型定义',
     fileName: () => `${props.moduleName}Type.ts`,
     filePath: () => `/types/${props.moduleName}Type.ts`,
-    prompt: () => {
+    basePrompt: typePrompt,
+    promptGenerator: () => {
       if (!props.tableValue) {
         alert('请填写列表字段表格信息');
         return '';
       }
-      return `${typePrompt}${variablePrompt.value}\n${props.tableValue}`;
+      if (!props.searchValue) {
+        alert('请填写检索字段表格信息');
+        return '';
+      }
+      if (isArray(typePrompt)) {
+        return typePrompt.map(
+          (ele) => `${ele.prompt}${variablePrompt.value}${getTablePrompt(ele.tableType)}`
+        );
+      } else {
+        return [`${typePrompt}${variablePrompt.value}\n\n${props.tableValue}`];
+      }
     }
   },
   {
     key: 'step2',
     title: '生成entity',
     fileName: () => `entity.ts`,
-    filePath: () => `/domains/${deInitial(props.moduleName)}Domain/entity.ts`
+    filePath: () => `/domains/${deInitial(props.moduleName)}Domain/entity.ts`,
+    basePrompt: entityPrompts,
+    promptGenerator: () => {
+      if (!props.tableValue) {
+        alert('请填写列表字段表格信息');
+        return '';
+      }
+      if (isArray(entityPrompts)) {
+        return entityPrompts.map(
+          (ele) => `${ele.prompt}${variablePrompt.value}${getTablePrompt(ele.tableType)}`
+        );
+      } else {
+        return [`${entityPrompts}${variablePrompt.value}\n\n${props.tableValue}`];
+      }
+    }
   },
   {
     key: 'step3',
@@ -76,25 +136,62 @@ const items = ref([
     filePath: () => `/domains/${deInitial(props.moduleName)}Domain/enum.ts`
   }
 ]);
-const generate = (gebPrompt?: () => string) => {
+const openPromptModal = (gebPrompt?: () => string[] | '') => {
   const prompt = gebPrompt?.();
   if (!prompt) {
-    alert('未正确定义prompt，请检查');
+    return false;
   }
-  fetch('http://rd-gateway.patsnap.info/compute/openai_chatgpt_turbo', {
-    method: 'POST',
-    headers: {
-      Authorization: 'Basic Y2hlbnlpbnlpbmc6eURWMlh1eXVCM1VjSlhEdXVhM3hFaA=='
-    },
-    body: JSON.stringify({ message: prompt })
-  })
-    .then((response) => response.json())
-    .then((data) => {
+  modalVisible.value = true;
+};
+const fetchGPTResult = async (prompt: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    fetch('http://rd-gateway.patsnap.info/compute/openai_chatgpt_turbo', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Basic Y2hlbnlpbnlpbmc6eURWMlh1eXVCM1VjSlhEdXVhM3hFaA=='
+      },
+      body: JSON.stringify({ message: prompt })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        resolve(data.data.message);
+      });
+  });
+};
+const generate = (gebPrompt?: () => string[] | '') => {
+  const prompt = gebPrompt?.();
+  if (!prompt) {
+    return false;
+  }
+  if (isArray(prompt)) {
+    const promiseArr = prompt.map((ele) => fetchGPTResult(ele));
+    Promise.all(promiseArr).then((resArr) => {
       returnResult.value = {
         ...returnResult.value,
-        [String(current.value)]: data.data.message
+        [String(current.value)]: resArr.join('\n\n')
       };
     });
+  } else {
+    fetchGPTResult(prompt).then((res: string) => {
+      returnResult.value = {
+        ...returnResult.value,
+        [String(current.value)]: res
+      };
+    });
+  }
+};
+
+const downloadFile = (current: number, filename: string) => {
+  const text = returnResult.value[String(current)];
+  const blob = new Blob([text], { type: 'text/plain' });
+  const href = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = href;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(href);
 };
 </script>
 
@@ -107,6 +204,9 @@ const generate = (gebPrompt?: () => string) => {
 .generate-steps {
   width: 20%;
 }
+.result {
+  width: 60%;
+}
 
 .generate-content-info {
   display: flex;
@@ -116,5 +216,10 @@ const generate = (gebPrompt?: () => string) => {
 }
 .generate-content-top-name {
   font-weight: bold;
+}
+.prompt-modal .ant-modal .ant-modal-content {
+}
+.prompt-modal-info {
+  white-space: break-spaces;
 }
 </style>
