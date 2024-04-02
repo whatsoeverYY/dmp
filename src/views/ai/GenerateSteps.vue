@@ -27,6 +27,7 @@
         class="generate-content-info"
         :disabled="!moduleName"
         type="primary"
+        :loading="loading"
         @click="() => generate(items[current].promptGenerator)"
         >开始生成</Button
       >
@@ -41,7 +42,12 @@
     <div class="result" v-if="returnResult[String(current)]">
       <highlightjs language="typescript" :code="returnResult[String(current)]" />
     </div>
-    <Modal wrapClassName="prompt-modal" v-model:open="modalVisible" title="查看完整prompt">
+    <Modal
+      wrapClassName="prompt-modal"
+      v-model:open="modalVisible"
+      title="查看完整prompt"
+      @ok="modalVisible = false"
+    >
       <p class="prompt-modal-info">{{ items[current].promptGenerator?.().join('\n\n') }}</p>
     </Modal>
   </div>
@@ -71,6 +77,7 @@ const current = ref<number>(0);
 const modalVisible = ref(false);
 const variablePrompt = computed(() => `name=${props.moduleName}`);
 const returnResult = ref<Record<string, string>>({});
+const loading = ref(false);
 const getTablePrompt = (type: string) => {
   let resTable = '';
   if (type === 'table') {
@@ -150,7 +157,7 @@ const fetchGPTResult = async (prompt: string): Promise<string> => {
       headers: {
         Authorization: 'Basic Y2hlbnlpbnlpbmc6eURWMlh1eXVCM1VjSlhEdXVhM3hFaA=='
       },
-      body: JSON.stringify({ message: prompt })
+      body: JSON.stringify({ message: prompt, temperature: 0.1, model: 'gpt-3.5-turbo-16k' })
     })
       .then((response) => response.json())
       .then((data) => {
@@ -163,6 +170,11 @@ const generate = (gebPrompt?: () => string[] | '') => {
   if (!prompt) {
     return false;
   }
+  loading.value = true;
+  returnResult.value = {
+    ...returnResult.value,
+    [String(current.value)]: ''
+  };
   if (isArray(prompt)) {
     const promiseArr = prompt.map((ele) => fetchGPTResult(ele));
     Promise.all(promiseArr).then((resArr) => {
@@ -170,6 +182,7 @@ const generate = (gebPrompt?: () => string[] | '') => {
         ...returnResult.value,
         [String(current.value)]: resArr.join('\n\n')
       };
+      loading.value = false;
     });
   } else {
     fetchGPTResult(prompt).then((res: string) => {
@@ -177,6 +190,7 @@ const generate = (gebPrompt?: () => string[] | '') => {
         ...returnResult.value,
         [String(current.value)]: res
       };
+      loading.value = false;
     });
   }
 };
