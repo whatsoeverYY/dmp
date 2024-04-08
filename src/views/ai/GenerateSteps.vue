@@ -6,7 +6,12 @@
     >
   </Space>
   <div class="generate">
-    <Steps class="generate-steps" direction="vertical" :current="current" :items="items"></Steps>
+    <Steps
+      class="generate-steps"
+      direction="vertical"
+      v-model:current="current"
+      :items="items"
+    ></Steps>
     <div class="generate-content">
       <div class="generate-content-info">
         <label>文件名称:</label>
@@ -53,7 +58,11 @@
   </div>
 </template>
 <script setup lang="ts">
+import { apiPrompt } from '@/views/ai/prompts/apiPrompts';
 import { entityPrompts } from '@/views/ai/prompts/entityPrompts';
+import { enumPrompt } from '@/views/ai/prompts/enumPrompts';
+import { servicePrompt } from '@/views/ai/prompts/servicePrompts';
+import { transformPrompts } from '@/views/ai/prompts/transformPrompts';
 import { typePrompt } from '@/views/ai/prompts/typePrompts';
 import { Steps, Button, Space, Modal } from 'ant-design-vue';
 import { isArray } from 'ant-design-vue/es/_util/util';
@@ -91,6 +100,15 @@ const getTablePrompt = (type: string) => {
   }
   return `\n\n${resTable}`;
 };
+const generatePrompt = (prompt: Array<{ prompt: string; tableType: string }> | string) => {
+  if (isArray(prompt)) {
+    return prompt.map(
+      (ele) => `${ele.prompt}${variablePrompt.value}${getTablePrompt(ele.tableType)}`
+    );
+  } else {
+    return [`${prompt}${variablePrompt.value}`];
+  }
+};
 const items = ref([
   {
     key: 'step1',
@@ -107,13 +125,7 @@ const items = ref([
         alert('请填写检索字段表格信息');
         return '';
       }
-      if (isArray(typePrompt)) {
-        return typePrompt.map(
-          (ele) => `${ele.prompt}${variablePrompt.value}${getTablePrompt(ele.tableType)}`
-        );
-      } else {
-        return [`${typePrompt}${variablePrompt.value}\n\n${props.tableValue}`];
-      }
+      return generatePrompt(typePrompt);
     }
   },
   {
@@ -127,20 +139,64 @@ const items = ref([
         alert('请填写列表字段表格信息');
         return '';
       }
-      if (isArray(entityPrompts)) {
-        return entityPrompts.map(
-          (ele) => `${ele.prompt}${variablePrompt.value}${getTablePrompt(ele.tableType)}`
-        );
-      } else {
-        return [`${entityPrompts}${variablePrompt.value}\n\n${props.tableValue}`];
-      }
+      return generatePrompt(entityPrompts);
     }
   },
   {
     key: 'step3',
     title: '生成enum',
     fileName: () => `enum.ts`,
-    filePath: () => `/domains/${deInitial(props.moduleName)}Domain/enum.ts`
+    filePath: () => `/domains/${deInitial(props.moduleName)}Domain/enum.ts`,
+    basePrompt: enumPrompt,
+    promptGenerator: () => {
+      if (!props.tableValue) {
+        alert('请填写列表字段表格信息');
+        return '';
+      }
+      if (!props.searchValue) {
+        alert('请填写检索字段表格信息');
+        return '';
+      }
+      if (!props.detailValue) {
+        alert('请填写详情字段表格信息');
+        return '';
+      }
+      return generatePrompt(enumPrompt);
+    }
+  },
+  {
+    key: 'step4',
+    title: '生成transform',
+    fileName: () => `transform.ts`,
+    filePath: () => `/domains/${deInitial(props.moduleName)}Domain/transform.ts`,
+    basePrompt: transformPrompts,
+    promptGenerator: () => {
+      if (!props.searchValue) {
+        alert('请填写检索字段表格信息');
+        return '';
+      }
+      return generatePrompt(transformPrompts);
+    }
+  },
+  {
+    key: 'step5',
+    title: '生成api',
+    fileName: () => `${deInitial(props.moduleName)}.ts`,
+    filePath: () => `/apis/${deInitial(props.moduleName)}.ts`,
+    basePrompt: apiPrompt,
+    promptGenerator: () => {
+      return generatePrompt(apiPrompt);
+    }
+  },
+  {
+    key: 'step6',
+    title: '生成service',
+    fileName: () => `service.ts`,
+    filePath: () => `/domains/${deInitial(props.moduleName)}Domain/service.ts`,
+    basePrompt: servicePrompt,
+    promptGenerator: () => {
+      return generatePrompt(servicePrompt);
+    }
   }
 ]);
 const openPromptModal = (gebPrompt?: () => string[] | '') => {

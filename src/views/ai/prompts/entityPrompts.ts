@@ -8,7 +8,7 @@ const entityPrompt =
   '再定义constructor，参数为data，类型为{name}Dto，默认值为空对象，并使用ts的as语法认为它的类型为{name}Dto。constructor内调用super方法，传入data参数。\n' +
   '\n' +
   '对表格中字段按顺序定义取值函数get\n' +
-  '规则1： 每个字段的取值函数名称为 [li][数据库field名称转成首字母大写的驼峰格式] ，返回值为this.data.[数据库field名称(小写下划线格式)]。\n' +
+  '规则1： 每个字段的取值函数名称为 [li][列表字段转成首字母大写的驼峰格式] ，返回值为this.data.[列表字段(小写下划线格式)]。\n' +
   '规则2：备注值为KEY的字段，在规则1的基础上，增加一下取值函数，名为dyDbId，返回值同规则1。\n' +
   '规则3：最后定义get postData，返回类型为{name}Dto,返回值为this.data。\n' +
   '规则4：除了dyDbId和postData，在每一个取值函数的上方加/** 注释 /格式的单行注释，注释内容为该字段在下表中对应的字段名称值。\n' +
@@ -23,9 +23,11 @@ const entityPrompt =
   '  }\n' +
   '  /** 字段名称 */\n' +
   '  get liXxx() {\n' +
-  '\n' +
-  'return this.data.xxx;\n' +
-  '\n' +
+  '    return this.data.xxx;\n' +
+  '  }\n' +
+  '  /** 字段名称 */\n' +
+  '  get liXxxId() {\n' +
+  '    return this.data.xxx_id;\n' +
   '  }\n' +
   '  get postData(): XXXDto {\n' +
   '    return {\n' +

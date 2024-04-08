@@ -1,6 +1,6 @@
 <template>
   <div class="demo">
-    <h2>DMP模块代码生成</h2>
+    <!--    <h2>DMP模块代码生成</h2>-->
     <div class="step-0">
       <Space direction="vertical" class="left">
         <Space>
@@ -60,21 +60,25 @@
 import GenerateSteps from '@/views/ai/GenerateSteps.vue';
 import { ref } from 'vue';
 import { Textarea, Space } from 'ant-design-vue';
-const moduleName = ref('');
-const tableValue = ref('');
-const searchValue = ref('');
-const detailValue = ref('');
+const moduleName = ref(localStorage.getItem('moduleName') || '');
+const tableValue = ref(localStorage.getItem('tableValue') || '');
+const searchValue = ref(localStorage.getItem('searchValue') || '');
+const detailValue = ref(localStorage.getItem('detailValue') || '');
 const changeModuleName = (e: any) => {
   moduleName.value = e.target.value;
+  localStorage.setItem('moduleName', e.target.value);
 };
 const changeTableValue = (e: any) => {
   tableValue.value = e.target.value;
+  localStorage.setItem('tableValue', e.target.value);
 };
 const changeSearchValue = (e: any) => {
   searchValue.value = e.target.value;
+  localStorage.setItem('searchValue', e.target.value);
 };
 const changeDetailValue = (e: any) => {
   detailValue.value = e.target.value;
+  localStorage.setItem('detailValue', e.target.value);
 };
 const text = ref('');
 const code = ref(
