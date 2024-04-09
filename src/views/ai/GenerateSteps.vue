@@ -61,6 +61,7 @@
 import { apiPrompt } from '@/views/ai/prompts/apiPrompts';
 import { entityPrompts } from '@/views/ai/prompts/entityPrompts';
 import { enumPrompt } from '@/views/ai/prompts/enumPrompts';
+import { localePrompts } from '@/views/ai/prompts/localePrompts';
 import { servicePrompt } from '@/views/ai/prompts/servicePrompts';
 import { transformPrompts } from '@/views/ai/prompts/transformPrompts';
 import { typePrompt } from '@/views/ai/prompts/typePrompts';
@@ -100,13 +101,16 @@ const getTablePrompt = (type: string) => {
   }
   return `\n\n${resTable}`;
 };
-const generatePrompt = (prompt: Array<{ prompt: string; tableType: string }> | string) => {
+const generatePrompt = (
+  prompt: Array<{ prompt: string; tableType: string }> | string,
+  endPrompt?: string
+) => {
   if (isArray(prompt)) {
     return prompt.map(
       (ele) => `${ele.prompt}${variablePrompt.value}${getTablePrompt(ele.tableType)}`
     );
   } else {
-    return [`${prompt}${variablePrompt.value}`];
+    return [`${prompt}${variablePrompt.value}${endPrompt ? '\n\n' + endPrompt : ''}`];
   }
 };
 const items = ref([
@@ -197,6 +201,16 @@ const items = ref([
     promptGenerator: () => {
       return generatePrompt(servicePrompt);
     }
+  },
+  {
+    key: 'step7',
+    title: '生成i18n',
+    fileName: () => `cn.ts`,
+    filePath: () => `/views/${deInitial(props.moduleName)}/locales/cn.ts`,
+    basePrompt: localePrompts,
+    promptGenerator: () => {
+      return generatePrompt(localePrompts);
+    }
   }
 ]);
 const openPromptModal = (gebPrompt?: () => string[] | '') => {
@@ -211,7 +225,7 @@ const fetchGPTResult = async (prompt: string): Promise<string> => {
     fetch('http://rd-gateway.patsnap.info/compute/openai_chatgpt_turbo', {
       method: 'POST',
       headers: {
-        Authorization: 'Basic Y2hlbnlpbnlpbmc6eURWMlh1eXVCM1VjSlhEdXVhM3hFaA=='
+        Authorization: ''
       },
       body: JSON.stringify({ message: prompt, temperature: 0.1, model: 'gpt-3.5-turbo-16k' })
     })
@@ -272,10 +286,10 @@ const downloadFile = (current: number, filename: string) => {
   gap: 32px;
 }
 .generate-steps {
-  width: 20%;
+  width: 15%;
 }
 .result {
-  width: 60%;
+  width: 65%;
 }
 
 .generate-content-info {
