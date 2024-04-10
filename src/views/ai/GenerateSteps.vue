@@ -65,15 +65,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import { apiPrompt } from '@/views/ai/prompts/apiPrompts';
-import { entityPrompts } from '@/views/ai/prompts/entityPrompts';
-import { enumPrompt } from '@/views/ai/prompts/enumPrompts';
-import { localePrompts } from '@/views/ai/prompts/localePrompts';
-import { routerPrompt } from '@/views/ai/prompts/routerPrompts';
-import { servicePrompt } from '@/views/ai/prompts/servicePrompts';
-import { transformPrompts } from '@/views/ai/prompts/transformPrompts';
-import { typePrompt } from '@/views/ai/prompts/typePrompts';
-import { Steps, Button, Space, Modal } from 'ant-design-vue';
+import { fetchGPTResult } from '@/utils/fetchLLM';
+import { writeFileIO } from '@/utils/fs';
+import { usePrompts } from '@/views/ai/prompts/usePrompts';
+import { Steps, Button, Space, Modal, message } from 'ant-design-vue';
 import { isArray } from 'ant-design-vue/es/_util/util';
 import { ref, computed } from 'vue';
 const props = defineProps<{
@@ -81,156 +76,13 @@ const props = defineProps<{
   tableValue: string;
   searchValue: string;
   detailValue: string;
+  rootPath: string;
 }>();
-const initial = (str: string) => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-};
-const deInitial = (str: string) => {
-  return str.charAt(0).toLowerCase() + str.slice(1);
-};
-const replaceStr = (str: string) => {
-  return str.replace('\\n', '\n');
-};
 const current = ref<number>(0);
 const modalVisible = ref(false);
-const variablePrompt = computed(() => `name=${props.moduleName}`);
 const returnResult = ref<Record<string, string>>({});
 const loading = ref(false);
-const getTablePrompt = (type: string) => {
-  let resTable = '';
-  if (type === 'table') {
-    resTable = props.tableValue;
-  }
-  if (type === 'search') {
-    resTable = props.searchValue;
-  }
-  if (type === 'detail') {
-    resTable = props.detailValue;
-  }
-  return `\n\n${resTable}`;
-};
-const generatePrompt = (
-  prompt: Array<{ prompt: string; tableType: string }> | string,
-  endPrompt?: string
-) => {
-  if (isArray(prompt)) {
-    return prompt.map(
-      (ele) => `${ele.prompt}${variablePrompt.value}${getTablePrompt(ele.tableType)}`
-    );
-  } else {
-    return [`${prompt}${variablePrompt.value}${endPrompt ? '\n\n' + endPrompt : ''}`];
-  }
-};
-const items = ref([
-  {
-    key: 'step1',
-    title: '生成类型定义',
-    fileName: () => `${props.moduleName}Type.ts`,
-    filePath: () => `/types`,
-    basePrompt: typePrompt,
-    promptGenerator: () => {
-      if (!props.tableValue) {
-        alert('请填写列表字段表格信息');
-        return '';
-      }
-      if (!props.searchValue) {
-        alert('请填写检索字段表格信息');
-        return '';
-      }
-      return generatePrompt(typePrompt);
-    }
-  },
-  {
-    key: 'step2',
-    title: '生成entity',
-    fileName: () => `entity.ts`,
-    filePath: () => `/domains/${deInitial(props.moduleName)}Domain`,
-    basePrompt: entityPrompts,
-    promptGenerator: () => {
-      if (!props.tableValue) {
-        alert('请填写列表字段表格信息');
-        return '';
-      }
-      return generatePrompt(entityPrompts);
-    }
-  },
-  {
-    key: 'step3',
-    title: '生成enum',
-    fileName: () => `enum.ts`,
-    filePath: () => `/domains/${deInitial(props.moduleName)}Domain`,
-    basePrompt: enumPrompt,
-    promptGenerator: () => {
-      if (!props.tableValue) {
-        alert('请填写列表字段表格信息');
-        return '';
-      }
-      if (!props.searchValue) {
-        alert('请填写检索字段表格信息');
-        return '';
-      }
-      if (!props.detailValue) {
-        alert('请填写详情字段表格信息');
-        return '';
-      }
-      return generatePrompt(enumPrompt);
-    }
-  },
-  {
-    key: 'step4',
-    title: '生成transform',
-    fileName: () => `transform.ts`,
-    filePath: () => `/domains/${deInitial(props.moduleName)}Domain`,
-    basePrompt: transformPrompts,
-    promptGenerator: () => {
-      if (!props.searchValue) {
-        alert('请填写检索字段表格信息');
-        return '';
-      }
-      return generatePrompt(transformPrompts);
-    }
-  },
-  {
-    key: 'step5',
-    title: '生成api',
-    fileName: () => `${deInitial(props.moduleName)}.ts`,
-    filePath: () => `/apis`,
-    basePrompt: apiPrompt,
-    promptGenerator: () => {
-      return generatePrompt(apiPrompt);
-    }
-  },
-  {
-    key: 'step6',
-    title: '生成service',
-    fileName: () => `service.ts`,
-    filePath: () => `/domains/${deInitial(props.moduleName)}Domain`,
-    basePrompt: servicePrompt,
-    promptGenerator: () => {
-      return generatePrompt(servicePrompt);
-    }
-  },
-  {
-    key: 'step7',
-    title: '生成router',
-    fileName: () => `${deInitial(props.moduleName)}.ts`,
-    filePath: () => `/router/data`,
-    basePrompt: routerPrompt,
-    promptGenerator: () => {
-      return generatePrompt(routerPrompt);
-    }
-  },
-  {
-    key: 'step8',
-    title: '生成i18n',
-    fileName: () => `cn.ts`,
-    filePath: () => `/views/${deInitial(props.moduleName)}/locales`,
-    basePrompt: localePrompts,
-    promptGenerator: () => {
-      return generatePrompt(localePrompts);
-    }
-  }
-]);
+const { steps: items } = usePrompts(props);
 const openPromptModal = (gebPrompt?: () => string[] | '') => {
   const prompt = gebPrompt?.();
   if (!prompt) {
@@ -238,23 +90,8 @@ const openPromptModal = (gebPrompt?: () => string[] | '') => {
   }
   modalVisible.value = true;
 };
-const fetchGPTResult = async (prompt: string): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    fetch('http://rd-gateway.patsnap.info/compute/openai_chatgpt_turbo', {
-      method: 'POST',
-      headers: {
-        Authorization: ''
-      },
-      body: JSON.stringify({ message: prompt, temperature: 0.1, model: 'gpt-3.5-turbo-16k' })
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        resolve(data.data.message);
-      });
-  });
-};
-const generate = (gebPrompt?: () => string[] | '') => {
-  const prompt = gebPrompt?.();
+const generate = (genPrompt?: () => string[] | '') => {
+  const prompt = genPrompt?.();
   if (!prompt) {
     return false;
   }
@@ -297,20 +134,10 @@ const downloadFile = (current: number, filename: string) => {
 };
 
 const writeFile = (current: number, filename: string, filepath: string) => {
-  const baseRoute = '/Users/ever/generate';
   const text = returnResult.value[String(current)];
-  fetch('http://localhost:3000/write-file/', {
-    method: 'POST',
-    mode: 'cors',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ filepath: `${baseRoute}${filepath}`, filename, content: text })
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log('data', data);
-    });
+  writeFileIO(text, `${props.rootPath}${filepath}`, filename).then(() => {
+    message.success('写入成功');
+  });
 };
 </script>
 
