@@ -31,7 +31,7 @@
             @change="changeDetailValue"
           />
         </Space>
-        <details>
+        <details class="details">
           <summary>查看表格详情</summary>
           <Space>
             <div v-if="tableValue">
@@ -110,6 +110,14 @@ const changeDetailValue = (e: any) => {
   detailValue.value = e.target.value;
   localStorage.setItem('detailValue', e.target.value);
 };
+const allWithProgress = (requests: Promise<string[]>[], callback: () => void) => {
+  requests.forEach((item) => {
+    item.then(() => {
+      callback();
+    });
+  });
+  return Promise.all(requests);
+};
 const generateAll = () => {
   const step = Math.floor(100 / steps.length);
   const start = 100 - step * steps.length;
@@ -126,15 +134,16 @@ const generateAll = () => {
     return;
   }
   loading.value = true;
-  progress.value = start;
+  progress.value = start - 1;
   const allStep = steps.map((ele) => {
     const prompts = ele?.promptGenerator?.() as string[];
     const promiseArr = prompts.map((ele) => fetchGPTResult(ele));
     return Promise.all(promiseArr);
   });
-  Promise.all(allStep).then((resArr) => {
+  allWithProgress(allStep, () => {
+    progress.value += step;
+  }).then((resArr) => {
     const allRes = resArr.map((ele, index) => {
-      progress.value = 50;
       const text = ele.join('\n\n');
       const filepath = `${rootPath.value}${steps[index].filePath()}`;
       const filename = steps[index].fileName();
@@ -150,29 +159,32 @@ const generateAll = () => {
 </script>
 
 <style>
-@media (min-width: 1024px) {
-  .demo {
-    height: 100%;
-    h1,
-    h2,
-    h3 {
-      text-align: center;
-    }
-    .step-0 {
-      display: flex;
-      gap: 32px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #f0f0f0;
-      .left {
-        width: 100%;
-        .ant-progress {
-          width: 300px;
+.demo {
+  height: 100%;
+  h1,
+  h2,
+  h3 {
+    text-align: center;
+  }
+  .step-0 {
+    display: flex;
+    gap: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    .left {
+      width: 100%;
+      .ant-progress {
+        width: 300px;
+      }
+      .details {
+        td {
+          white-space: nowrap;
         }
       }
     }
-    .steps {
-      margin-top: 32px;
-    }
+  }
+  .steps {
+    margin-top: 32px;
   }
 }
 </style>
