@@ -19,17 +19,17 @@
       </div>
       <div class="generate-content-info">
         <label>文件路径:</label>
-        <div class="generate-content-top-name">{{ items[current].filePath?.() }}</div>
+        <span class="generate-content-top-name">{{ items[current].filePath?.() }}</span>
       </div>
       <Button
-        class="generate-content-info"
+        class="generate-content-button"
         :disabled="!moduleName"
         type="primary"
         @click="() => openPromptModal(items[current].promptGenerator)"
         >查看完整prompt</Button
       >
       <Button
-        class="generate-content-info"
+        class="generate-content-button"
         :disabled="!moduleName"
         type="primary"
         :loading="loading"
@@ -38,10 +38,17 @@
       >
       <Button
         :disabled="!returnResult[String(current)]"
-        class="generate-content-info"
+        class="generate-content-button"
         type="primary"
         @click="() => downloadFile(current, items[current].fileName?.())"
         >下载文件</Button
+      >
+      <Button
+        :disabled="!returnResult[String(current)]"
+        class="generate-content-button"
+        type="primary"
+        @click="() => writeFile(current, items[current].fileName?.(), items[current].filePath?.())"
+        >写入系统</Button
       >
     </div>
     <div class="result" v-if="returnResult[String(current)]">
@@ -62,6 +69,7 @@ import { apiPrompt } from '@/views/ai/prompts/apiPrompts';
 import { entityPrompts } from '@/views/ai/prompts/entityPrompts';
 import { enumPrompt } from '@/views/ai/prompts/enumPrompts';
 import { localePrompts } from '@/views/ai/prompts/localePrompts';
+import { routerPrompt } from '@/views/ai/prompts/routerPrompts';
 import { servicePrompt } from '@/views/ai/prompts/servicePrompts';
 import { transformPrompts } from '@/views/ai/prompts/transformPrompts';
 import { typePrompt } from '@/views/ai/prompts/typePrompts';
@@ -118,7 +126,7 @@ const items = ref([
     key: 'step1',
     title: '生成类型定义',
     fileName: () => `${props.moduleName}Type.ts`,
-    filePath: () => `/types/${props.moduleName}Type.ts`,
+    filePath: () => `/types`,
     basePrompt: typePrompt,
     promptGenerator: () => {
       if (!props.tableValue) {
@@ -136,7 +144,7 @@ const items = ref([
     key: 'step2',
     title: '生成entity',
     fileName: () => `entity.ts`,
-    filePath: () => `/domains/${deInitial(props.moduleName)}Domain/entity.ts`,
+    filePath: () => `/domains/${deInitial(props.moduleName)}Domain`,
     basePrompt: entityPrompts,
     promptGenerator: () => {
       if (!props.tableValue) {
@@ -150,7 +158,7 @@ const items = ref([
     key: 'step3',
     title: '生成enum',
     fileName: () => `enum.ts`,
-    filePath: () => `/domains/${deInitial(props.moduleName)}Domain/enum.ts`,
+    filePath: () => `/domains/${deInitial(props.moduleName)}Domain`,
     basePrompt: enumPrompt,
     promptGenerator: () => {
       if (!props.tableValue) {
@@ -172,7 +180,7 @@ const items = ref([
     key: 'step4',
     title: '生成transform',
     fileName: () => `transform.ts`,
-    filePath: () => `/domains/${deInitial(props.moduleName)}Domain/transform.ts`,
+    filePath: () => `/domains/${deInitial(props.moduleName)}Domain`,
     basePrompt: transformPrompts,
     promptGenerator: () => {
       if (!props.searchValue) {
@@ -186,7 +194,7 @@ const items = ref([
     key: 'step5',
     title: '生成api',
     fileName: () => `${deInitial(props.moduleName)}.ts`,
-    filePath: () => `/apis/${deInitial(props.moduleName)}.ts`,
+    filePath: () => `/apis`,
     basePrompt: apiPrompt,
     promptGenerator: () => {
       return generatePrompt(apiPrompt);
@@ -196,7 +204,7 @@ const items = ref([
     key: 'step6',
     title: '生成service',
     fileName: () => `service.ts`,
-    filePath: () => `/domains/${deInitial(props.moduleName)}Domain/service.ts`,
+    filePath: () => `/domains/${deInitial(props.moduleName)}Domain`,
     basePrompt: servicePrompt,
     promptGenerator: () => {
       return generatePrompt(servicePrompt);
@@ -204,9 +212,19 @@ const items = ref([
   },
   {
     key: 'step7',
+    title: '生成router',
+    fileName: () => `${deInitial(props.moduleName)}.ts`,
+    filePath: () => `/router/data`,
+    basePrompt: routerPrompt,
+    promptGenerator: () => {
+      return generatePrompt(routerPrompt);
+    }
+  },
+  {
+    key: 'step8',
     title: '生成i18n',
     fileName: () => `cn.ts`,
-    filePath: () => `/views/${deInitial(props.moduleName)}/locales/cn.ts`,
+    filePath: () => `/views/${deInitial(props.moduleName)}/locales`,
     basePrompt: localePrompts,
     promptGenerator: () => {
       return generatePrompt(localePrompts);
@@ -277,6 +295,23 @@ const downloadFile = (current: number, filename: string) => {
   document.body.removeChild(link);
   URL.revokeObjectURL(href);
 };
+
+const writeFile = (current: number, filename: string, filepath: string) => {
+  const baseRoute = '/Users/ever/generate';
+  const text = returnResult.value[String(current)];
+  fetch('http://localhost:3000/write-file/', {
+    method: 'POST',
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ filepath: `${baseRoute}${filepath}`, filename, content: text })
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('data', data);
+    });
+};
 </script>
 
 <style>
@@ -288,18 +323,33 @@ const downloadFile = (current: number, filename: string) => {
 .generate-steps {
   width: 15%;
 }
+.generate-content {
+  width: 20%;
+}
 .result {
   width: 65%;
 }
 
 .generate-content-info {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
   gap: 8px;
   margin-bottom: 16px;
+  overflow: hidden;
+}
+.generate-content-button {
+  display: flex;
+  margin-bottom: 16px;
+}
+.generate-content-info label {
+  flex-shrink: 0;
 }
 .generate-content-top-name {
   font-weight: bold;
+  width: 100%;
+  word-wrap: break-word;
 }
 .prompt-modal .ant-modal .ant-modal-content {
 }
