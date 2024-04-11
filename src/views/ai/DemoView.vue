@@ -76,7 +76,7 @@ import { writeFileIO } from '@/utils/fs';
 import GenerateSteps from '@/views/ai/GenerateSteps.vue';
 import { usePrompts } from '@/views/ai/prompts/usePrompts';
 import { ref } from 'vue';
-import { Textarea, Space, Tooltip, Button, Progress, message } from 'ant-design-vue';
+import { Textarea, Space, Tooltip, Button, Progress, message, Input } from 'ant-design-vue';
 const moduleName = ref(localStorage.getItem('moduleName') || '');
 const rootPath = ref(localStorage.getItem('rootPath') || '');
 const tableValue = ref(localStorage.getItem('tableValue') || '');

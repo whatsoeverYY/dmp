@@ -2,11 +2,18 @@ import { actionPrompts } from '@/views/ai/prompts/actionPrompts';
 import { apiPrompt } from '@/views/ai/prompts/apiPrompts';
 import { baseListPagePrompts } from '@/views/ai/prompts/baseListPagePrompts';
 import { baseListPropsPrompts } from '@/views/ai/prompts/baseListPropsPrompts';
+import { docEditPrompts } from '@/views/ai/prompts/docEditPrompts';
+import { editablePrompt } from '@/views/ai/prompts/editablePrompts';
+import { editPagePrompts } from '@/views/ai/prompts/editPagePrompts';
+import { editPrompts } from '@/views/ai/prompts/editPrompts';
 import { entityPrompts } from '@/views/ai/prompts/entityPrompts';
 import { enumPrompt } from '@/views/ai/prompts/enumPrompts';
+import { formRulePrompts } from '@/views/ai/prompts/formRulePrompts';
 import { listColumnsPrompts } from '@/views/ai/prompts/listColumnsPrompts';
 import { localePrompts } from '@/views/ai/prompts/localePrompts';
 import { previewPrompts } from '@/views/ai/prompts/previewPrompts';
+import { readablePrompt } from '@/views/ai/prompts/readablePrompts';
+import { recyclePrompts } from '@/views/ai/prompts/recyclePrompts';
 import { routerPrompt } from '@/views/ai/prompts/routerPrompts';
 import { searchActionPrompts } from '@/views/ai/prompts/searchActionPrompts';
 import { searchFormPrompts } from '@/views/ai/prompts/searchFormPrompts';
@@ -237,7 +244,7 @@ export function usePrompts(props: {
       }
     },
     {
-      key: 'step13',
+      key: 'step14',
       title: '生成baseListPage',
       fileName: () => `Base${props.moduleName}ListPage.ts`,
       filePath: () => `/views/${deInitial(props.moduleName)}`,
@@ -247,7 +254,7 @@ export function usePrompts(props: {
       }
     },
     {
-      key: 'step14',
+      key: 'step15',
       title: '生成线上列表',
       fileName: () => `${props.moduleName}PreviewList.ts`,
       filePath: () => `/views/${deInitial(props.moduleName)}`,
@@ -255,6 +262,86 @@ export function usePrompts(props: {
       promptGenerator: () => {
         const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${props.searchValue}\n`;
         return generatePrompt(previewPrompts, endPrompt);
+      }
+    },
+    {
+      key: 'step16',
+      title: '生成线下编辑列表',
+      fileName: () => `${props.moduleName}EditList.ts`,
+      filePath: () => `/views/${deInitial(props.moduleName)}`,
+      basePrompt: editPrompts,
+      promptGenerator: () => {
+        const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${props.searchValue}\n`;
+        return generatePrompt(editPrompts, endPrompt);
+      }
+    },
+    {
+      key: 'step17',
+      title: '生成回收站',
+      fileName: () => `${props.moduleName}RecycleList.ts`,
+      filePath: () => `/views/${deInitial(props.moduleName)}`,
+      basePrompt: recyclePrompts,
+      promptGenerator: () => {
+        const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${props.searchValue}\n`;
+        return generatePrompt(recyclePrompts, endPrompt);
+      }
+    },
+    {
+      key: 'step18',
+      title: '生成详情readableField',
+      fileName: () => `renderReadableField.tsx`,
+      filePath: () => `/views/${deInitial(props.moduleName)}/config`,
+      basePrompt: readablePrompt,
+      promptGenerator: () => {
+        return generatePrompt(readablePrompt);
+      }
+    },
+    {
+      key: 'step19',
+      title: '生成详情editableField',
+      fileName: () => `renderEditableField.tsx`,
+      filePath: () => `/views/${deInitial(props.moduleName)}/config`,
+      basePrompt: editablePrompt,
+      promptGenerator: () => {
+        return generatePrompt(editablePrompt);
+      }
+    },
+    {
+      key: 'step20',
+      title: '生成详情docEdit',
+      fileName: () => `use${props.moduleName}DocEdit.tsx`,
+      filePath: () => `/views/${deInitial(props.moduleName)}/composition`,
+      basePrompt: docEditPrompts,
+      promptGenerator: () => {
+        if (!props.detailValue) {
+          alert('请填写详情字段表格信息');
+          return '';
+        }
+        return generatePrompt(docEditPrompts);
+      }
+    },
+    {
+      key: 'step21',
+      title: '生成详情formRule',
+      fileName: () => `use${props.moduleName}FormRule.tsx`,
+      filePath: () => `/views/${deInitial(props.moduleName)}/composition`,
+      basePrompt: formRulePrompts,
+      promptGenerator: () => {
+        return generatePrompt(formRulePrompts);
+      }
+    },
+    {
+      key: 'step22',
+      title: '生成详情editPage',
+      fileName: () => `${props.moduleName}EditPage.tsx`,
+      filePath: () => `/views/${deInitial(props.moduleName)}/detail`,
+      basePrompt: editPagePrompts,
+      promptGenerator: () => {
+        if (!props.detailValue) {
+          alert('请填写详情字段表格信息');
+          return '';
+        }
+        return generatePrompt(editPagePrompts);
       }
     }
   ];
