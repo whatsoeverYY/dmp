@@ -1,8 +1,15 @@
+import { actionPrompts } from '@/views/ai/prompts/actionPrompts';
 import { apiPrompt } from '@/views/ai/prompts/apiPrompts';
+import { baseListPagePrompts } from '@/views/ai/prompts/baseListPagePrompts';
+import { baseListPropsPrompts } from '@/views/ai/prompts/baseListPropsPrompts';
 import { entityPrompts } from '@/views/ai/prompts/entityPrompts';
 import { enumPrompt } from '@/views/ai/prompts/enumPrompts';
+import { listColumnsPrompts } from '@/views/ai/prompts/listColumnsPrompts';
 import { localePrompts } from '@/views/ai/prompts/localePrompts';
+import { previewPrompts } from '@/views/ai/prompts/previewPrompts';
 import { routerPrompt } from '@/views/ai/prompts/routerPrompts';
+import { searchActionPrompts } from '@/views/ai/prompts/searchActionPrompts';
+import { searchFormPrompts } from '@/views/ai/prompts/searchFormPrompts';
 import { servicePrompt } from '@/views/ai/prompts/servicePrompts';
 import { transformPrompts } from '@/views/ai/prompts/transformPrompts';
 import { typePrompt } from '@/views/ai/prompts/typePrompts';
@@ -53,7 +60,7 @@ export function usePrompts(props: {
   const steps = [
     {
       key: 'step1',
-      title: '生成类型定义',
+      title: '生成type',
       fileName: () => `${props.moduleName}Type.ts`,
       filePath: () => `/types`,
       basePrompt: typePrompt,
@@ -169,6 +176,85 @@ export function usePrompts(props: {
           return '';
         }
         return generatePrompt(localePrompts);
+      }
+    },
+    {
+      key: 'step9',
+      title: '生成searchForm',
+      fileName: () => `use${props.moduleName}SearchFormItems.ts`,
+      filePath: () => `/views/${deInitial(props.moduleName)}/composition`,
+      basePrompt: searchFormPrompts,
+      promptGenerator: () => {
+        if (!props.searchValue) {
+          alert('请填写检索字段表格信息');
+          return '';
+        }
+        return generatePrompt(searchFormPrompts);
+      }
+    },
+    {
+      key: 'step10',
+      title: '生成listColumn',
+      fileName: () => `use${props.moduleName}ListColumns.ts`,
+      filePath: () => `/views/${deInitial(props.moduleName)}/composition`,
+      basePrompt: listColumnsPrompts,
+      promptGenerator: () => {
+        if (!props.tableValue) {
+          alert('请填写列表字段表格信息');
+          return '';
+        }
+        return generatePrompt(listColumnsPrompts);
+      }
+    },
+    {
+      key: 'step11',
+      title: '生成searchAction',
+      fileName: () => `use${props.moduleName}SearchAction.ts`,
+      filePath: () => `/views/${deInitial(props.moduleName)}/composition`,
+      basePrompt: searchActionPrompts,
+      promptGenerator: () => {
+        return generatePrompt(searchActionPrompts);
+      }
+    },
+    {
+      key: 'step12',
+      title: '生成action',
+      fileName: () => `use${props.moduleName}Action.ts`,
+      filePath: () => `/views/${deInitial(props.moduleName)}/composition`,
+      basePrompt: actionPrompts,
+      promptGenerator: () => {
+        return generatePrompt(actionPrompts);
+      }
+    },
+    {
+      key: 'step13',
+      title: '生成listPageProps',
+      fileName: () => `Base${props.moduleName}ListPageProps.ts`,
+      filePath: () => `/views/${deInitial(props.moduleName)}`,
+      basePrompt: baseListPropsPrompts,
+      promptGenerator: () => {
+        return generatePrompt(baseListPropsPrompts);
+      }
+    },
+    {
+      key: 'step13',
+      title: '生成baseListPage',
+      fileName: () => `Base${props.moduleName}ListPage.ts`,
+      filePath: () => `/views/${deInitial(props.moduleName)}`,
+      basePrompt: baseListPagePrompts,
+      promptGenerator: () => {
+        return generatePrompt(baseListPagePrompts);
+      }
+    },
+    {
+      key: 'step14',
+      title: '生成线上列表',
+      fileName: () => `${props.moduleName}PreviewList.ts`,
+      filePath: () => `/views/${deInitial(props.moduleName)}`,
+      basePrompt: previewPrompts,
+      promptGenerator: () => {
+        const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${props.searchValue}\n`;
+        return generatePrompt(previewPrompts, endPrompt);
       }
     }
   ];

@@ -2,8 +2,8 @@ import { basicPrompts } from '@/views/ai/prompts/basicPrompts';
 
 export const apiPrompt =
   basicPrompts.startPhaseWithoutTable +
-  basicPrompts.templateCode +
   '所有的{name}均需要根据给定值进行替换。\n' +
+  basicPrompts.templateCode +
   "const dyDbHttp = addUrlPrefix('{小写中划线(name)}/dynamodb');\n" +
   "const pgHttp = addUrlPrefix('{小写中划线(name)}/pg')\n" +
   '\n' +

@@ -144,7 +144,7 @@ const writeFile = (current: number, filename: string, filepath: string) => {
 <style>
 .generate {
   display: flex;
-  margin-top: 32px;
+  margin-top: 20px;
   gap: 32px;
 }
 .generate-steps {

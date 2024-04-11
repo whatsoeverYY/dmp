@@ -31,24 +31,24 @@
             @change="changeDetailValue"
           />
         </Space>
-        <details class="details">
-          <summary>查看表格详情</summary>
-          <Space>
-            <div v-if="tableValue">
-              <h3>列表字段表格</h3>
-              <v-md-preview :text="tableValue" height="400px"></v-md-preview>
-            </div>
-            <div v-if="searchValue">
-              <h3>检索字段表格</h3>
-              <v-md-preview :text="searchValue" height="400px"></v-md-preview>
-            </div>
-            <div v-if="detailValue">
-              <h3>详情字段表格</h3>
-              <v-md-preview :text="detailValue" height="400px"></v-md-preview>
-            </div>
-          </Space>
-        </details>
-        <Space>
+        <Space size="large">
+          <details class="details">
+            <summary>查看表格详情</summary>
+            <Space>
+              <div v-if="tableValue">
+                <h3>列表字段表格</h3>
+                <v-md-preview :text="tableValue" height="400px"></v-md-preview>
+              </div>
+              <div v-if="searchValue">
+                <h3>检索字段表格</h3>
+                <v-md-preview :text="searchValue" height="400px"></v-md-preview>
+              </div>
+              <div v-if="detailValue">
+                <h3>详情字段表格</h3>
+                <v-md-preview :text="detailValue" height="400px"></v-md-preview>
+              </div>
+            </Space>
+          </details>
           <Tooltip placement="bottomRight" color="red">
             <template #title>
               <span>{{ `生成所有文件至目录: ${rootPath}` }}</span>
@@ -184,7 +184,7 @@ const generateAll = () => {
     }
   }
   .steps {
-    margin-top: 32px;
+    margin-top: 20px;
   }
 }
 </style>
