@@ -9,6 +9,21 @@ export const editPrompts =
   '以_id_view结尾的列表字段不需要添加到columns数组中。\n' +
   '常量定义完成，最后return一个组件，名称为Base{name}ListPage。\n' +
   basicPrompts.templateCode +
+  "import { DATA_SOURCE } from '@/constants/enum';\n" +
+  'import {\n' +
+  '  E_BASE_SEARCH_PARAMS,\n' +
+  '  E_BASE_LIST_BUTTON_NAME,\n' +
+  '  E_BASE_TABLE_COLUMN,\n' +
+  "} from '@/domains/baseDomain/base.enum';\n" +
+  'import {\n' +
+  '  E_TRANSLATIONAL_MEDICINE_SEARCH_PARAMS,\n' +
+  '  E_TRANSLATIONAL_MEDICINE_LIST_COLUMNS,\n' +
+  "} from '@/domains/translationalMedicineDomain/enum';\n" +
+  "import { E_PERMISSION } from '@/type/enum';\n" +
+  "import { DATA_STATUS } from '@/types/DrugTypes';\n" +
+  "import { BaseTranslationalMedicineListPage } from '@/views/translationalMedicine/BaseTranslationalMedicineListPage';\n" +
+  "import { defineComponent } from 'vue';\n" +
+  '\n' +
   'export default defineComponent({\n' +
   "name: '{name}EditList',\n" +
   'setup() {\n' +
@@ -61,5 +76,5 @@ export const editPrompts =
   '\n' +
   '},\n' +
   '});\n' +
-  basicPrompts.importPhase +
+  basicPrompts.importPhaseRule +
   basicPrompts.endPhase;

@@ -6,6 +6,12 @@ const tablePrompt =
   '此对象有一个必选属性field，值为[li][转首字母大写驼峰(列表字段)]。\n' +
   '备注列的值为KEY的字段，field值为dyDbId；列表字段值以_id_view结尾的字段不在columnConfig中添加，其余遵循上述规则。\n' +
   basicPrompts.templateCode +
+  "import { GTableColumn } from '@/components/business/Table/type';\n" +
+  "import { useTableListProcessUnit } from '@/compositions/lowcodeConfig/useTableListProcessUnit';\n" +
+  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
+  "import { E_TRANSLATIONAL_MEDICINE_LIST_COLUMNS } from '@/domains/translationalMedicineDomain/enum';\n" +
+  "import { PartialRecord } from '@/types/BaseTypes';\n" +
+  '\n' +
   'export function useXXXListColumns() {\n' +
   'const columnConfig: PartialRecord<\n' +
   'E_XX_XX_LIST_COLUMNS,\n' +
@@ -23,7 +29,7 @@ const tablePrompt =
   'tableListConfig: completedConfig,\n' +
   '};\n' +
   '}\n' +
-  basicPrompts.importPhase +
+  basicPrompts.importPhaseRule +
   basicPrompts.endPhase;
 
 export const listColumnsPrompts = [{ prompt: tablePrompt, tableType: 'table' }];

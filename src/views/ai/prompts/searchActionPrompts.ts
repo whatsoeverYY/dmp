@@ -2,10 +2,25 @@ import { basicPrompts } from '@/views/ai/prompts/basicPrompts';
 
 export const searchActionPrompts =
   basicPrompts.startPhaseWithoutTable +
-  '导出方法use{name}SearchAction，函数入参及其类型定义、函数体如下示例\n' +
+  '导出方法use{name}SearchAction，函数入参为props，props类型为Base{name}ListPageProps、函数体如下示例\n' +
   basicPrompts.templateCode +
-  "import { computed, unref } from 'vue';\n" +
-  "import { Base{name}ListPageProps } from '../Base{name}ListPageProps';\n" +
+  "import { PermActionType } from '@/components/business/Table/ActionButtons';\n" +
+  "import { getDefaultSortFieldByColumns } from '@/components/business/Table/compostion/useSort';\n" +
+  'import {useSearchActionProcessUnit} from "@/compositions/lowcodeConfig/useSearchActionProcessUnit";\n' +
+  "import { useCommonListOperate } from '@/compositions/useCommonListOperate';\n" +
+  "import { useSearch } from '@/compositions/useSearch/useSearch';\n" +
+  'import {\n' +
+  '  baseColumnRecord,\n' +
+  '  E_BASE_LIST_BUTTON_NAME,\n' +
+  "} from '@/domains/baseDomain';\n" +
+  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
+  "import { TranslationalMedicineService } from '@/domains/translationalMedicineDomain/service';\n" +
+  "import { E_ROUTER_NAME, E_ROUTER_PARAMS } from '@/type/router';\n" +
+  "import { TranslationalMedicineSearchParams } from '@/types/TranslationalMedicineType';\n" +
+  "import { getDecodeQuery } from '@/utils/sourceHelper';\n" +
+  "import { BaseTranslationalMedicineListPageProps } from '@/views/translationalMedicine/BaseTranslationalMedicineListPageProps';\n" +
+  "import { computed } from 'vue';\n" +
+  "import { RouteLocationNormalized } from 'vue-router';\n" +
   '\n' +
   'export function use{name}SearchAction(props: Base{name}ListPageProps) {\n' +
   'const configList = computed(() => props.searchButtons);\n' +
@@ -84,8 +99,7 @@ export const searchActionPrompts =
   'const searchActionConfig: PermActionType<\n' +
   'E_BASE_LIST_BUTTON_NAME,\n' +
   '{name}Entity\n' +
-  '\n' +
-  '= {\n' +
+  '>= {\n' +
   '[E_BASE_LIST_BUTTON_NAME.SEARCH]: {\n' +
   'disabled: disabledSearch.value,\n' +
   'execute: () => onSearch(),\n' +
@@ -127,5 +141,5 @@ export const searchActionPrompts =
   '};\n' +
   '\n' +
   '}\n' +
-  basicPrompts.importPhase +
+  basicPrompts.importPhaseRule +
   basicPrompts.endPhase;

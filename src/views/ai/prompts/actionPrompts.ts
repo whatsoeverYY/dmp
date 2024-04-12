@@ -4,12 +4,25 @@ export const actionPrompts =
   basicPrompts.startPhaseWithoutTable +
   '导出方法use{name}Action，函数入参及其类型定义、函数体如下示例\n' +
   basicPrompts.templateCode +
+  "import { showProcessDialog } from '@/components/business/Table/action/base';\n" +
+  "import { PermActionType } from '@/components/business/Table/ActionButtons';\n" +
+  "import { useActionProcessUnit } from '@/compositions/lowcodeConfig/useActionProcessUnit';\n" +
+  "import { getPermActionBtnVisible } from '@/compositions/lowcodeConfig/utils';\n" +
+  'import {\n' +
+  '  ListOperate,\n' +
+  '  useCommonListOperate,\n' +
+  "} from '@/compositions/useCommonListOperate';\n" +
+  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
+  "import { E_PERMISSION } from '@/type/enum';\n" +
+  "import { E_ROUTER_PARAMS, E_ROUTER_NAME } from '@/type/router';\n" +
+  "import { DATA_STATUS } from '@/types/DrugTypes';\n" +
+  "import { MaybeRef } from '@vueuse/core';\n" +
+  '\n' +
   'export function use{name}Action(\n' +
   'opt: Pick<\n' +
   'ListOperate<{name}Entity>,\n' +
   "'onAfterAction' | 'resetChecked' | 'dataSource'\n" +
-  '\n' +
-  '& {\n' +
+  '>& {\n' +
   'configList?: MaybeRef<E_PERMISSION[]>;\n' +
   '}\n' +
   ') {\n' +
@@ -82,5 +95,5 @@ export const actionPrompts =
   '};\n' +
   '\n' +
   '}\n' +
-  basicPrompts.importPhase +
+  basicPrompts.importPhaseRule +
   basicPrompts.endPhase;

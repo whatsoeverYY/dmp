@@ -32,8 +32,21 @@ const searchPrompt =
   'fetchImmediate: true,  \n' +
   'multiple: true}\n' +
   basicPrompts.templateCode +
-  "import { DatePicker } from 'ant-design-vue';\n" +
+  "import { SearchFormConfigItem } from '@/components/SearchForm';\n" +
+  "import { renderFormItems } from '@/components/SearchForm/config';\n" +
+  "import { useSearchFormProcessUnit } from '@/compositions/lowcodeConfig/useSearchFormProcessUnit';\n" +
+  'import {\n' +
+  '  getDictTypeList4Autocomplete,\n' +
+  '  getEntityAutocompleteApi,\n' +
+  '  genEnCnLabel,\n' +
+  "} from '@/constants/business/autocompleteApiV2';\n" +
+  "import { E_BASE_SEARCH_PARAMS } from '@/domains/baseDomain/base.enum';\n" +
+  "import { E_TRANSLATIONAL_MEDICINE_SEARCH_PARAMS } from '@/domains/translationalMedicineDomain/enum';\n" +
+  "import { DICTYPENAMES, E_TIME_FORMAT } from '@/type/enum';\n" +
+  "import { TranslationalMedicineSearchFormParams } from '@/types/TranslationalMedicineType';\n" +
   "import { MaybeRef } from '@vueuse/core';\n" +
+  "import { DatePicker } from 'ant-design-vue';\n" +
+  '\n' +
   'type XXXSearchFormConfig =\n' +
   'SearchFormConfigItem<XXXSearchFormParams>;\n' +
   'const RangePicker = DatePicker.RangePicker;\n' +
@@ -81,7 +94,7 @@ const searchPrompt =
   'appSearchFormItems,\n' +
   '};\n' +
   '}\n' +
-  basicPrompts.importPhase +
+  basicPrompts.importPhaseRule +
   basicPrompts.endPhase;
 
 export const searchFormPrompts = [{ prompt: searchPrompt, tableType: 'search' }];

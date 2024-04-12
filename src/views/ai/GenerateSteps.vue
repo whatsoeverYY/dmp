@@ -33,7 +33,7 @@
         :disabled="!moduleName"
         type="primary"
         :loading="loading"
-        @click="() => generate(items[current].promptGenerator)"
+        @click="() => generate(items[current].promptGenerator, items[current].importPhase)"
         >开始生成</Button
       >
       <Button
@@ -73,6 +73,7 @@ import { isArray } from 'ant-design-vue/es/_util/util';
 import { ref, computed } from 'vue';
 const props = defineProps<{
   moduleName: string;
+  moduleNameCn: string;
   tableValue: string;
   searchValue: string;
   detailValue: string;
@@ -90,8 +91,9 @@ const openPromptModal = (gebPrompt?: () => string[] | '') => {
   }
   modalVisible.value = true;
 };
-const generate = (genPrompt?: () => string[] | '') => {
+const generate = (genPrompt?: () => string[] | '', genImportPhase?: () => string) => {
   const prompt = genPrompt?.();
+  const importPhase = genImportPhase?.();
   if (!prompt) {
     return false;
   }
@@ -105,7 +107,7 @@ const generate = (genPrompt?: () => string[] | '') => {
     Promise.all(promiseArr).then((resArr) => {
       returnResult.value = {
         ...returnResult.value,
-        [String(current.value)]: resArr.join('\n\n')
+        [String(current.value)]: `${importPhase ? importPhase + '\n\n' : ''}${resArr.join('\n\n')}`
       };
       loading.value = false;
     });

@@ -12,7 +12,7 @@ const dtoPrompt =
   '    xxx_id?: string[];\n' +
   '    xxx_id_view?: BaseNameInfo[];\n' +
   '}\n' +
-  basicPrompts.importPhase +
+  basicPrompts.noImports +
   basicPrompts.endPhase;
 
 const searchParamsPrompt =
@@ -26,7 +26,7 @@ const searchParamsPrompt =
   '/** 字段名称 */\n' +
   'xxx?: string;\n' +
   '}\n' +
-  basicPrompts.importPhase +
+  basicPrompts.noImports +
   basicPrompts.endPhase;
 
 const searchFormParamsPrompt =
@@ -42,7 +42,7 @@ const searchFormParamsPrompt =
   '/** *字段名称* */\n' +
   'xx?: IAutoCompleteInputValue[];\n' +
   '}\n' +
-  basicPrompts.importPhase +
+  basicPrompts.noImports +
   basicPrompts.endPhase;
 
 export const typePrompt = [

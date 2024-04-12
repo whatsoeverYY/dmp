@@ -4,6 +4,22 @@ export const baseListPropsPrompts =
   basicPrompts.startPhaseWithoutTable +
   '导出常量base{name}ListPageProps，值为一个箭头函数，函数体如下示例\n' +
   basicPrompts.templateCode +
+  'import {\n' +
+  '  E_BASE_TABLE_COLUMN,\n' +
+  '  E_BASE_LIST_BUTTON_NAME,\n' +
+  "} from '@/domains/baseDomain';\n" +
+  "import { E_BASE_SEARCH_PARAMS } from '@/domains/baseDomain/base.enum';\n" +
+  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
+  'import {\n' +
+  '  E_TRANSLATIONAL_MEDICINE_LIST_COLUMNS,\n' +
+  '  E_TRANSLATIONAL_MEDICINE_SEARCH_PARAMS,\n' +
+  "} from '@/domains/translationalMedicineDomain/enum';\n" +
+  "import { E_PERMISSION } from '@/type/enum';\n" +
+  "import { baseListPageProps } from '@/types/BaseProps';\n" +
+  "import { TranslationalMedicineSearchFormParams } from '@/types/TranslationalMedicineType';\n" +
+  "import { defineComponentProps } from '@/utils/base';\n" +
+  "import { PropType, ExtractPropTypes } from 'vue';\n" +
+  '\n' +
   'export const base{name}ListPageProps = () => \n' +
   'defineComponentProps({\n' +
   '...baseListPageProps<{name}SearchFormParams, {name}Entity>(),\n' +
@@ -38,5 +54,5 @@ export const baseListPropsPrompts =
   '});\n' +
   'export type Base{name}ListPageProps = ExtractPropTypes<\n' +
   'ReturnType<typeof base{name}ListPageProps>>;\n' +
-  basicPrompts.importPhase +
+  basicPrompts.importPhaseRule +
   basicPrompts.endPhase;

@@ -4,6 +4,17 @@ export const servicePrompt =
   basicPrompts.startPhaseWithoutTable +
   '类名为{name}DomainService，其中定义两个函数分别为getList和getDetail，函数入参及其类型定义、函数体如下示例\n' +
   basicPrompts.templateCode +
+  'import {\n' +
+  '  getDynamodbTranslationalMedicineList,\n' +
+  '  getPgTranslationalMedicineList,\n' +
+  '  getPgTranslationalMedicineDetail,\n' +
+  '  getDynamodbTranslationalMedicineDetail,\n' +
+  "} from '@/apis/translationalMedicine';\n" +
+  "import { DATA_SOURCE } from '@/constants/enum';\n" +
+  "import { BaseDomainService } from '@/domains/baseDomain';\n" +
+  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
+  "import { TranslationalMedicineSearchFormParams } from '@/types/TranslationalMedicineType';\n" +
+  "import { transformSearchForm2PostData } from './transform';\n" +
   '\n' +
   "import { transformSearchForm2PostData } from './transform';\n" +
   '\n' +
@@ -43,5 +54,5 @@ export const servicePrompt =
   '\n' +
   '}\n' +
   'export const {name}Service = new {name}DomainService().getProxyInstance();\n' +
-  basicPrompts.importPhase +
+  basicPrompts.importPhaseRule +
   basicPrompts.endPhase;

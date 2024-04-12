@@ -14,7 +14,12 @@ const entityPrompt =
   '规则4：除了dyDbId和postData，在每一个取值函数的上方加/** 注释 /格式的单行注释，注释内容为该字段在下表中对应的字段名称值。\n' +
   '规则5：列表字段值以_id_view结束的字段不需要添加get函数\n' +
   '规则6：不需要任何其他的注释说明。\n' +
-  '下面是class定义部分以及示例代码：\n' +
+  basicPrompts.templateCode +
+  "import { BaseReadableEntity, BaseEditableEntity } from '@/domains/baseDomain';\n" +
+  "import { E_DATA_TYPE } from '@/types/DataType';\n" +
+  "import { TranslationalMedicineDto } from '@/types/TranslationalMedicineType';\n" +
+  "import { DataTypeEnum, DATA_TYPE_ENUM } from '@/utils/dataType';\n" +
+  '\n' +
   'export class XXXEntity extends BaseReadableEntity<XXXDto> implements BaseEditableEntity<XXXDto> {\n' +
   '\tstatic dataTypeEnum: DataTypeEnum = DATA_TYPE_ENUM[E_DATA_TYPE.XXX];\n' +
   '\t\n' +
@@ -35,7 +40,7 @@ const entityPrompt =
   '    };\n' +
   '  }\n' +
   '}\n' +
-  basicPrompts.importPhase +
+  basicPrompts.importPhaseRule +
   basicPrompts.endPhase;
 
 export const entityPrompts = [{ prompt: entityPrompt, tableType: 'table' }];

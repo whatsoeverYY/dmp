@@ -6,6 +6,40 @@ const detailPrompt =
   '在{待补充数据}处根据下面提供的表格完善代码，规则如下:\n' +
   '数组值来自于下表中的[E_{转大写下划线(name)}_DOC_ITEMS.{转大写(详情字段)}]，以及4个来自E_BASE_DOC_EDIT_FORM的基本字段，只在只读模式下展示' +
   basicPrompts.templateCode +
+  "import Process from '@/components/business/BpmnWorkflow/Process';\n" +
+  'import {\n' +
+  '  useDocEditBaseConfig,\n' +
+  '  useDocEditFetchDetail,\n' +
+  "} from '@/components/business/DocEditV2/composition/useDocEdit';\n" +
+  "import { DocEditV2 } from '@/components/business/DocEditV2/DocEdit';\n" +
+  "import { DocEditLayout } from '@/components/business/DocEditV2/DocEditLayout';\n" +
+  "import { E_BASE_DOC_EDIT_FORM } from '@/components/business/DocEditV2/enum';\n" +
+  'import {\n' +
+  '  PermActionType,\n' +
+  '  ActionButtonPermGroup,\n' +
+  "} from '@/components/business/Table/ActionButtons';\n" +
+  "import { useActionProcessUnit } from '@/compositions/lowcodeConfig/useActionProcessUnit';\n" +
+  "import { preFilterConfig } from '@/compositions/lowcodeConfig/utils';\n" +
+  'import {\n' +
+  '  useRouteId,\n' +
+  '  useRouteDataSource,\n' +
+  '  useRouteReadMode,\n' +
+  "} from '@/compositions/useRouteInfo';\n" +
+  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
+  "import { E_TRANSLATIONAL_MEDICINE_DOC_ITEMS } from '@/domains/translationalMedicineDomain/enum';\n" +
+  "import { TranslationalMedicineService } from '@/domains/translationalMedicineDomain/service';\n" +
+  "import { getDataCountStore } from '@/store';\n" +
+  "import { E_PERMISSION } from '@/type/enum';\n" +
+  "import { E_ROUTER_PARAMS, E_ROUTER_NAME } from '@/type/router';\n" +
+  "import { getGoBackLocation } from '@/utils/route';\n" +
+  "import OperateHistory from '@/views/drugs/components/OperateHistory';\n" +
+  "import { useTranslationalMedicineAction } from '@/views/translationalMedicine/composition/useTranslationalMedicineAction';\n" +
+  "import { useTranslationalMedicineDocEdit } from '@/views/translationalMedicine/composition/useTranslationalMedicineDocEdit';\n" +
+  "import { useTranslationalMedicineFormRule } from '@/views/translationalMedicine/composition/useTranslationalMedicineFormRule';\n" +
+  "import { defineComponent, unref, computed } from 'vue';\n" +
+  "import { useRoute, useRouter } from 'vue-router';\n" +
+  "import cn from '../locales/cn';\n" +
+  '\n' +
   'export default defineComponent({\n' +
   "name: '{name}EditPage',\n" +
   'i18n: {\n' +
@@ -197,7 +231,7 @@ const detailPrompt =
   '\n' +
   '},\n' +
   '});\n' +
-  basicPrompts.importPhase +
+  basicPrompts.importPhaseRule +
   basicPrompts.endPhase;
 
 export const editPagePrompts = [{ prompt: detailPrompt, tableType: 'detail' }];

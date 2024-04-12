@@ -8,7 +8,15 @@ const transformPrompt =
   '规则2：备注值为ID的字段，先使用handleAutoCompleteValue方法处理。再按规则1处理。\n' +
   '规则3：备注值为DATE的字段，在return之前，使用getTimeRange处理，得到[当前字段名][_from]以及[当前字段名][_to]的二元数组返回值，再直接返回。\n' +
   '规则4：在返回对象字段的每一行上方加/** 注释 /格式的单行注释，内容为该字段在下表中对应的字段名称。不需要任何其他的注释说明。\n' +
-  '下面是function定义部分以及部分示例：\n' +
+  basicPrompts.templateCode +
+  "import { baseTransformSearchForm2PostData } from '@/domains/baseDomain';\n" +
+  'import {\n' +
+  '  TranslationalMedicineSearchFormParams,\n' +
+  '  TranslationalMedicineSearchParams,\n' +
+  "} from '@/types/TranslationalMedicineType';\n" +
+  "import { handleAutoCompleteValue } from '@/utils/drugHelper';\n" +
+  "import { getTimeRange } from '@/utils/getTimeRange';\n" +
+  '\n' +
   'export function transformSearchForm2PostData(params: {name}SearchFormParams): {name}SearchParams  {\n' +
   'const baseParams = baseTransformSearchForm2PostData(params);\n' +
   'const [[data]_from, [data]_to] = getTimeRange(params.fe_[data]_range)\n' +
@@ -22,7 +30,7 @@ const transformPrompt =
   '[data]_to,\n' +
   '}\n' +
   '}\n' +
-  basicPrompts.importPhase +
+  basicPrompts.importPhaseRule +
   basicPrompts.endPhase;
 
 export const transformPrompts = [{ prompt: transformPrompt, tableType: 'search' }];

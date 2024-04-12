@@ -5,8 +5,18 @@ export const baseListPagePrompts =
   '导出常量Base{name}ListPage，值为一个component\n' +
   '所有的{name}均需要根据给定值进行替换。\n' +
   basicPrompts.templateCode +
-  "import { computed, defineComponent } from 'vue';\n" +
+  "import { ActionButtonPermGroup } from '@/components/business/Table/ActionButtons';\n" +
+  "import { PaginationTable } from '@/components/business/Table/PaginationTable';\n" +
+  "import { GCollapseFormLayout } from '@/components/layout/CollapseFormLayout/CollapseFormLayout';\n" +
+  "import { SearchForm } from '@/components/SearchForm';\n" +
+  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
+  "import { baseTranslationalMedicineListPageProps } from '@/views/translationalMedicine/BaseTranslationalMedicineListPageProps';\n" +
+  "import { useTranslationalMedicineAction } from '@/views/translationalMedicine/composition/useTranslationalMedicineAction';\n" +
+  "import { useTranslationalMedicineListColumns } from '@/views/translationalMedicine/composition/useTranslationalMedicineListColumns';\n" +
+  "import { useTranslationalMedicineSearchAction } from '@/views/translationalMedicine/composition/useTranslationalMedicineSearchAction';\n" +
+  "import { useTranslationalMedicineSearchFormItems } from '@/views/translationalMedicine/composition/useTranslationalMedicineSearchFormItems';\n" +
   "import cn from './locales/cn';\n" +
+  "import { defineComponent, computed } from 'vue';\n" +
   '\n' +
   'export const BaseXXXListPage = defineComponent({\n' +
   "name: 'BaseXXXListPage',\n" +
@@ -126,5 +136,5 @@ export const baseListPagePrompts =
   '\n' +
   '},\n' +
   '});\n' +
-  basicPrompts.importPhase +
+  basicPrompts.importPhaseRule +
   basicPrompts.endPhase;

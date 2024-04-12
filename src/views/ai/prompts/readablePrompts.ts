@@ -17,5 +17,5 @@ export const readablePrompt =
   '};\n' +
   'return readableConfig;\n' +
   '}\n' +
-  basicPrompts.importPhase2 +
+  basicPrompts.importPhaseRule +
   basicPrompts.endPhase;

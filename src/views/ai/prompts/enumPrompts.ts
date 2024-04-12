@@ -11,7 +11,7 @@ const listPrompt =
   ' /** 字段名称 */\n' +
   " XX_XX = 'XX_XX';\n" +
   '}\n' +
-  basicPrompts.importPhase +
+  basicPrompts.noImports +
   basicPrompts.endPhase;
 
 const searchPrompt =
@@ -25,7 +25,7 @@ const searchPrompt =
   ' /** 字段名称 */\n' +
   " XX_XX = 'XX_XX';\n" +
   '}\n' +
-  basicPrompts.importPhase +
+  basicPrompts.noImports +
   basicPrompts.endPhase;
 
 const detailPrompt =
@@ -39,7 +39,7 @@ const detailPrompt =
   ' /** 字段名称 */\n' +
   " XX_XX = 'XX_XX';\n" +
   '}\n' +
-  basicPrompts.importPhase +
+  basicPrompts.noImports +
   basicPrompts.endPhase;
 
 export const enumPrompt = [

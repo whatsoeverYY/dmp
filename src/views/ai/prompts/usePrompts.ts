@@ -1,3 +1,5 @@
+import { deInitial } from '@/utils';
+import { importPhases } from '@/views/ai/importPhases/importPhases';
 import { actionPrompts } from '@/views/ai/prompts/actionPrompts';
 import { apiPrompt } from '@/views/ai/prompts/apiPrompts';
 import { baseListPagePrompts } from '@/views/ai/prompts/baseListPagePrompts';
@@ -28,17 +30,10 @@ export function usePrompts(props: {
   searchValue: string;
   detailValue: string;
   moduleName: string;
+  moduleNameCn: string;
 }) {
   const variablePrompt = computed(() => `name=${props.moduleName}`);
-  const initial = (str: string) => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
-  const deInitial = (str: string) => {
-    return str.charAt(0).toLowerCase() + str.slice(1);
-  };
-  const replaceStr = (str: string) => {
-    return str.replace('\\n', '\n');
-  };
+
   const getTablePrompt = (type: string) => {
     let resTable = '';
     if (type === 'table') {
@@ -71,6 +66,7 @@ export function usePrompts(props: {
       fileName: () => `${props.moduleName}Type.ts`,
       filePath: () => `/types`,
       basePrompt: typePrompt,
+      importPhase: () => importPhases.typeImports,
       promptGenerator: () => {
         if (!props.tableValue) {
           alert('请填写列表字段表格信息');
@@ -155,16 +151,6 @@ export function usePrompts(props: {
     },
     {
       key: 'step7',
-      title: '生成router',
-      fileName: () => `${deInitial(props.moduleName)}.ts`,
-      filePath: () => `/router/data`,
-      basePrompt: routerPrompt,
-      promptGenerator: () => {
-        return generatePrompt(routerPrompt);
-      }
-    },
-    {
-      key: 'step8',
       title: '生成i18n',
       fileName: () => `cn.ts`,
       filePath: () => `/views/${deInitial(props.moduleName)}/locales`,
@@ -186,9 +172,9 @@ export function usePrompts(props: {
       }
     },
     {
-      key: 'step9',
+      key: 'step8',
       title: '生成searchForm',
-      fileName: () => `use${props.moduleName}SearchFormItems.ts`,
+      fileName: () => `use${props.moduleName}SearchFormItems.tsx`,
       filePath: () => `/views/${deInitial(props.moduleName)}/composition`,
       basePrompt: searchFormPrompts,
       promptGenerator: () => {
@@ -200,9 +186,9 @@ export function usePrompts(props: {
       }
     },
     {
-      key: 'step10',
+      key: 'step9',
       title: '生成listColumn',
-      fileName: () => `use${props.moduleName}ListColumns.ts`,
+      fileName: () => `use${props.moduleName}ListColumns.tsx`,
       filePath: () => `/views/${deInitial(props.moduleName)}/composition`,
       basePrompt: listColumnsPrompts,
       promptGenerator: () => {
@@ -214,27 +200,7 @@ export function usePrompts(props: {
       }
     },
     {
-      key: 'step11',
-      title: '生成searchAction',
-      fileName: () => `use${props.moduleName}SearchAction.ts`,
-      filePath: () => `/views/${deInitial(props.moduleName)}/composition`,
-      basePrompt: searchActionPrompts,
-      promptGenerator: () => {
-        return generatePrompt(searchActionPrompts);
-      }
-    },
-    {
-      key: 'step12',
-      title: '生成action',
-      fileName: () => `use${props.moduleName}Action.ts`,
-      filePath: () => `/views/${deInitial(props.moduleName)}/composition`,
-      basePrompt: actionPrompts,
-      promptGenerator: () => {
-        return generatePrompt(actionPrompts);
-      }
-    },
-    {
-      key: 'step13',
+      key: 'step10',
       title: '生成listPageProps',
       fileName: () => `Base${props.moduleName}ListPageProps.ts`,
       filePath: () => `/views/${deInitial(props.moduleName)}`,
@@ -244,9 +210,29 @@ export function usePrompts(props: {
       }
     },
     {
-      key: 'step14',
+      key: 'step11',
+      title: '生成searchAction',
+      fileName: () => `use${props.moduleName}SearchAction.tsx`,
+      filePath: () => `/views/${deInitial(props.moduleName)}/composition`,
+      basePrompt: searchActionPrompts,
+      promptGenerator: () => {
+        return generatePrompt(searchActionPrompts);
+      }
+    },
+    {
+      key: 'step12',
+      title: '生成action',
+      fileName: () => `use${props.moduleName}Action.tsx`,
+      filePath: () => `/views/${deInitial(props.moduleName)}/composition`,
+      basePrompt: actionPrompts,
+      promptGenerator: () => {
+        return generatePrompt(actionPrompts);
+      }
+    },
+    {
+      key: 'step13',
       title: '生成baseListPage',
-      fileName: () => `Base${props.moduleName}ListPage.ts`,
+      fileName: () => `Base${props.moduleName}ListPage.tsx`,
       filePath: () => `/views/${deInitial(props.moduleName)}`,
       basePrompt: baseListPagePrompts,
       promptGenerator: () => {
@@ -254,9 +240,9 @@ export function usePrompts(props: {
       }
     },
     {
-      key: 'step15',
+      key: 'step14',
       title: '生成线上列表',
-      fileName: () => `${props.moduleName}PreviewList.ts`,
+      fileName: () => `${props.moduleName}PreviewList.tsx`,
       filePath: () => `/views/${deInitial(props.moduleName)}`,
       basePrompt: previewPrompts,
       promptGenerator: () => {
@@ -265,9 +251,9 @@ export function usePrompts(props: {
       }
     },
     {
-      key: 'step16',
+      key: 'step15',
       title: '生成线下编辑列表',
-      fileName: () => `${props.moduleName}EditList.ts`,
+      fileName: () => `${props.moduleName}EditList.tsx`,
       filePath: () => `/views/${deInitial(props.moduleName)}`,
       basePrompt: editPrompts,
       promptGenerator: () => {
@@ -276,9 +262,9 @@ export function usePrompts(props: {
       }
     },
     {
-      key: 'step17',
+      key: 'step16',
       title: '生成回收站',
-      fileName: () => `${props.moduleName}RecycleList.ts`,
+      fileName: () => `${props.moduleName}RecycleList.tsx`,
       filePath: () => `/views/${deInitial(props.moduleName)}`,
       basePrompt: recyclePrompts,
       promptGenerator: () => {
@@ -287,7 +273,7 @@ export function usePrompts(props: {
       }
     },
     {
-      key: 'step18',
+      key: 'step17',
       title: '生成详情readableField',
       fileName: () => `renderReadableField.tsx`,
       filePath: () => `/views/${deInitial(props.moduleName)}/config`,
@@ -297,7 +283,7 @@ export function usePrompts(props: {
       }
     },
     {
-      key: 'step19',
+      key: 'step18',
       title: '生成详情editableField',
       fileName: () => `renderEditableField.tsx`,
       filePath: () => `/views/${deInitial(props.moduleName)}/config`,
@@ -307,7 +293,7 @@ export function usePrompts(props: {
       }
     },
     {
-      key: 'step20',
+      key: 'step19',
       title: '生成详情docEdit',
       fileName: () => `use${props.moduleName}DocEdit.tsx`,
       filePath: () => `/views/${deInitial(props.moduleName)}/composition`,
@@ -321,7 +307,7 @@ export function usePrompts(props: {
       }
     },
     {
-      key: 'step21',
+      key: 'step20',
       title: '生成详情formRule',
       fileName: () => `use${props.moduleName}FormRule.tsx`,
       filePath: () => `/views/${deInitial(props.moduleName)}/composition`,
@@ -331,7 +317,7 @@ export function usePrompts(props: {
       }
     },
     {
-      key: 'step22',
+      key: 'step21',
       title: '生成详情editPage',
       fileName: () => `${props.moduleName}EditPage.tsx`,
       filePath: () => `/views/${deInitial(props.moduleName)}/detail`,
@@ -342,6 +328,16 @@ export function usePrompts(props: {
           return '';
         }
         return generatePrompt(editPagePrompts);
+      }
+    },
+    {
+      key: 'step22',
+      title: '生成router',
+      fileName: () => `${deInitial(props.moduleName)}.ts`,
+      filePath: () => `/router/data`,
+      basePrompt: routerPrompt,
+      promptGenerator: () => {
+        return generatePrompt(routerPrompt, `nameCn=${props.moduleNameCn}`);
       }
     }
   ];

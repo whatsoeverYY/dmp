@@ -19,8 +19,7 @@ export const formRulePrompts =
   '\n' +
   'export function use{name}FormRule<\n' +
   'T extends {name}Entity = {name}Entity\n' +
-  '\n' +
-  '(formState: Ref<T>, formItems: MaybeRef<IFromItem<T, Partial<T>>[]>) {\n' +
+  '>(formState: Ref<T>, formItems: MaybeRef<IFromItem<T, Partial<T>>[]>) {\n' +
   'const { t } = useLocale();\n' +
   'const isProd = useRouteIsProd();\n' +
   'const dataTypeEnum = {name}Entity.dataTypeEnum;\n' +
@@ -32,8 +31,7 @@ export const formRulePrompts =
   'const defaultRules: PartialRecord<\n' +
   'keyof {name}Entity,\n' +
   'IFromValidatorItem[]\n' +
-  '\n' +
-  '= {\n' +
+  '> = {\n' +
   '};\n' +
   '\n' +
   'const { rules } = useFormEditRule(\n' +
@@ -47,5 +45,5 @@ export const formRulePrompts =
   'defaultRules: rules,\n' +
   '});\n' +
   '}\n' +
-  basicPrompts.importPhase2 +
+  basicPrompts.importPhaseRule +
   basicPrompts.endPhase;

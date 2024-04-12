@@ -6,6 +6,8 @@
         <Space class="basic-info">
           <label>请输入模块名称(CamelCase)</label>
           <Input v-model:value="moduleName" @change="changeModuleName" />
+          <label>请输入模块中文名称</label>
+          <Input v-model:value="moduleNameCn" @change="changeModuleNameCn" />
           <label>请输入根目录</label>
           <Input v-model:value="rootPath" @change="changeRoutePath" />
           <label>根目录:</label>
@@ -55,6 +57,7 @@
             </template>
             <Button :loading="loading" type="primary" @click="generateAll">一键生成</Button>
           </Tooltip>
+          <Button :loading="loading" type="primary" @click="writeBasic">写入基本信息</Button>
           <Progress v-if="progress" :percent="progress" status="active" />
         </Space>
       </Space>
@@ -62,6 +65,7 @@
     <div class="steps">
       <GenerateSteps
         :module-name="moduleName"
+        :module-name-cn="moduleNameCn"
         :table-value="tableValue"
         :detail-value="detailValue"
         :search-value="searchValue"
@@ -71,13 +75,20 @@
   </div>
 </template>
 <script setup lang="ts">
+import { camelCaseToUpperCaseUnderscore, deInitial } from '@/utils';
 import { fetchGPTResult } from '@/utils/fetchLLM';
 import { writeFileIO } from '@/utils/fs';
+import {
+  writeFileDataType,
+  writeFileDataTypeEnum,
+  writeFileTypeRouter
+} from '@/views/ai/basic/writeBasic';
 import GenerateSteps from '@/views/ai/GenerateSteps.vue';
 import { usePrompts } from '@/views/ai/prompts/usePrompts';
 import { ref } from 'vue';
 import { Textarea, Space, Tooltip, Button, Progress, message, Input } from 'ant-design-vue';
 const moduleName = ref(localStorage.getItem('moduleName') || '');
+const moduleNameCn = ref(localStorage.getItem('moduleNameCn') || '');
 const rootPath = ref(localStorage.getItem('rootPath') || '');
 const tableValue = ref(localStorage.getItem('tableValue') || '');
 const searchValue = ref(localStorage.getItem('searchValue') || '');
@@ -86,6 +97,7 @@ const loading = ref(false);
 const progress = ref(0);
 const { steps } = usePrompts({
   moduleName: moduleName.value,
+  moduleNameCn: moduleNameCn.value,
   detailValue: detailValue.value,
   searchValue: searchValue.value,
   tableValue: tableValue.value
@@ -93,6 +105,10 @@ const { steps } = usePrompts({
 const changeModuleName = (e: any) => {
   moduleName.value = e.target.value;
   localStorage.setItem('moduleName', e.target.value);
+};
+const changeModuleNameCn = (e: any) => {
+  moduleNameCn.value = e.target.value;
+  localStorage.setItem('moduleNameCn', e.target.value);
 };
 const changeRoutePath = (e: any) => {
   rootPath.value = e.target.value;
@@ -144,7 +160,8 @@ const generateAll = () => {
     progress.value += step;
   }).then((resArr) => {
     const allRes = resArr.map((ele, index) => {
-      const text = ele.join('\n\n');
+      const importPhase = steps[index].importPhase?.() || '';
+      const text = `${importPhase ? importPhase + '\n\n' : ''}${ele.join('\n\n')}`;
       const filepath = `${rootPath.value}${steps[index].filePath()}`;
       const filename = steps[index].fileName();
       return writeFileIO(text, `${filepath}`, filename);
@@ -154,6 +171,47 @@ const generateAll = () => {
       progress.value = 100;
       loading.value = false;
     });
+  });
+};
+
+const writeBasic = () => {
+  const ModuleName = moduleName.value;
+  const MODULE_NAME = camelCaseToUpperCaseUnderscore(ModuleName);
+  const moduleN = deInitial(moduleName.value);
+  const dataType = `${MODULE_NAME} = '${ModuleName}'`;
+  const dataTypeEnum = `[E_DATA_TYPE.${MODULE_NAME}]: new DataTypeEnum(
+    E_DATA_TYPE.${MODULE_NAME},
+    '${moduleNameCn.value}',
+    '${moduleN}Id'
+  )`;
+  const typeRouter = `/* ------------------------------------------------- ${moduleNameCn.value} ------------------------------------------------ */
+  ${MODULE_NAME} = '${MODULE_NAME}',
+  ${MODULE_NAME}_LIST = '${MODULE_NAME}_LIST',
+  ${MODULE_NAME}_DETAIL = '${MODULE_NAME}_DETAIL',
+  ${MODULE_NAME}_EDIT = '${MODULE_NAME}_EDIT',
+  ${MODULE_NAME}_EDIT_LIST = '${MODULE_NAME}_EDIT_LIST',
+  ${MODULE_NAME}_RECYCLE_BIN = '${MODULE_NAME}_RECYCLE_BIN',`;
+  const typeRouterParams = `${MODULE_NAME}_ID = 'id',`;
+
+  const promiseArr = [
+    writeFileDataType({
+      filepath: `${rootPath.value}/types/DataType.ts`,
+      content: dataType,
+      start: 'export enum E_DATA_TYPE {'
+    }),
+    writeFileDataTypeEnum({
+      filepath: `${rootPath.value}/utils/dataType.ts`,
+      content: dataTypeEnum,
+      start: 'export const DATA_TYPE_ENUM = {'
+    }),
+    writeFileTypeRouter({
+      filepath: `${rootPath.value}/type/router.ts`,
+      content: [typeRouter, typeRouterParams],
+      start: ['export const enum E_ROUTER_NAME {', 'export const enum E_ROUTER_PARAMS {']
+    })
+  ];
+  Promise.all(promiseArr).then((ele) => {
+    message.success('写入成功');
   });
 };
 </script>

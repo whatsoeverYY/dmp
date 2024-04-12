@@ -17,5 +17,5 @@ export const editablePrompt =
   '};\n' +
   'return editableConfig;\n' +
   '}\n' +
-  basicPrompts.importPhase2 +
+  basicPrompts.importPhaseRule +
   basicPrompts.endPhase;
