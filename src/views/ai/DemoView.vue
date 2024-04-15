@@ -10,6 +10,8 @@
           <Input v-model:value="moduleNameCn" @change="changeModuleNameCn" />
           <label>请输入根目录</label>
           <Input v-model:value="rootPath" @change="changeRoutePath" />
+        </Space>
+        <Space>
           <label>根目录:</label>
           <span>{{ rootPath }}</span>
         </Space>

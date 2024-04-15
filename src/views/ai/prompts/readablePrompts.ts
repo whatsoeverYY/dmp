@@ -3,7 +3,7 @@ import { basicPrompts } from '@/views/ai/prompts/basicPrompts';
 export const readablePrompt =
   basicPrompts.startPhaseWithoutTable +
   basicPrompts.templateCode +
-  "import { EditableFieldFunc } from '@/components/business/DocEditV2/DocEditType';\n" +
+  "import { ReadableFieldFunc } from '@/components/business/DocEditV2/DocEditType';\n" +
   "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
   "import { E_TRANSLATIONAL_MEDICINE_DOC_ITEMS } from '@/domains/translationalMedicineDomain/enum';\n" +
   '\n' +
