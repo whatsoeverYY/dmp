@@ -34,32 +34,28 @@
             v-model:value="detailValue"
             @change="changeDetailValue"
           />
+          <Button type="primary" @click="tableModalVisible = true">查看表格详情</Button>
         </Space>
         <Space size="large">
-          <details class="details">
-            <summary>查看表格详情</summary>
-            <Space>
-              <div v-if="tableValue">
-                <h3>列表字段表格</h3>
-                <v-md-preview :text="tableValue" height="400px"></v-md-preview>
-              </div>
-              <div v-if="searchValue">
-                <h3>检索字段表格</h3>
-                <v-md-preview :text="searchValue" height="400px"></v-md-preview>
-              </div>
-              <div v-if="detailValue">
-                <h3>详情字段表格</h3>
-                <v-md-preview :text="detailValue" height="400px"></v-md-preview>
-              </div>
-            </Space>
-          </details>
+          <Select
+            v-model:value="modelValue"
+            style="width: 250px"
+            placeholder="请选择模型"
+            :options="options"
+            @change="handleChangeModel as any"
+          />
+          <Input
+            placeholder="请输入token"
+            v-model:value="authorization"
+            @change="changeAuthorization"
+          />
+          <Button type="primary" @click="writeBasic">写入基本信息</Button>
           <Tooltip placement="bottomRight" color="red">
             <template #title>
               <span>{{ `生成所有文件至目录: ${rootPath}` }}</span>
             </template>
             <Button :loading="loading" type="primary" @click="generateAll">一键生成</Button>
           </Tooltip>
-          <Button :loading="loading" type="primary" @click="writeBasic">写入基本信息</Button>
           <Progress v-if="progress" :percent="progress" status="active" />
         </Space>
       </Space>
@@ -71,9 +67,34 @@
         :table-value="tableValue"
         :detail-value="detailValue"
         :search-value="searchValue"
+        :model-value="modelValue"
+        :authorization="authorization"
+        :engine="engine"
         :root-path="rootPath"
       />
     </div>
+    <Modal
+      wrapClassName="table-modal"
+      v-model:open="tableModalVisible"
+      title="查看完整prompt"
+      @ok="tableModalVisible = false"
+      width="calc(100vw - 200px)"
+    >
+      <div class="table-modal-content">
+        <div v-if="tableValue">
+          <h3>列表字段表格</h3>
+          <v-md-preview :text="tableValue" height="400px"></v-md-preview>
+        </div>
+        <div v-if="searchValue">
+          <h3>检索字段表格</h3>
+          <v-md-preview :text="searchValue" height="400px"></v-md-preview>
+        </div>
+        <div v-if="detailValue">
+          <h3>详情字段表格</h3>
+          <v-md-preview :text="detailValue" height="400px"></v-md-preview>
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>
 <script setup lang="ts">
@@ -83,20 +104,51 @@ import { writeFileIO } from '@/utils/fs';
 import {
   writeFileDataType,
   writeFileDataTypeEnum,
-  writeFileTypeRouter
+  writeFileTypeRouter,
+  writeFileTypeRouterData,
+  writeFileCn
 } from '@/views/ai/basic/writeBasic';
 import GenerateSteps from '@/views/ai/GenerateSteps.vue';
 import { usePrompts } from '@/views/ai/prompts/usePrompts';
-import { ref } from 'vue';
-import { Textarea, Space, Tooltip, Button, Progress, message, Input } from 'ant-design-vue';
+import { ref, computed } from 'vue';
+import {
+  Textarea,
+  Space,
+  Tooltip,
+  Button,
+  Progress,
+  message,
+  Input,
+  Modal,
+  Select
+} from 'ant-design-vue';
 const moduleName = ref(localStorage.getItem('moduleName') || '');
 const moduleNameCn = ref(localStorage.getItem('moduleNameCn') || '');
 const rootPath = ref(localStorage.getItem('rootPath') || '');
 const tableValue = ref(localStorage.getItem('tableValue') || '');
 const searchValue = ref(localStorage.getItem('searchValue') || '');
 const detailValue = ref(localStorage.getItem('detailValue') || '');
+const modelValue = ref(localStorage.getItem('modelValue') || undefined);
+const authorization = ref(localStorage.getItem('authorization') || '');
+const engine = computed((): string => {
+  if (modelValue.value?.includes('claude')) {
+    return 'anthropic';
+  } else if (modelValue.value?.includes('gpt')) {
+    return 'azure';
+  }
+  return 'google';
+});
 const loading = ref(false);
+const tableModalVisible = ref(false);
 const progress = ref(0);
+const options = [
+  { value: 'claude-3-haiku', label: 'claude-3-haiku' },
+  { value: 'claude-3-sonnet', label: 'claude-3-sonnet' },
+  { value: 'gemini-1.5-pro-preview-0409', label: 'gemini-1.5-pro-preview-0409' },
+  { value: 'gpt-3.5-turbo', label: 'gpt-3.5-turbo' },
+  { value: 'gpt-3.5-turbo-16k', label: 'gpt-3.5-turbo-16k' },
+  { value: 'gpt-4', label: 'gpt-4' }
+];
 const { steps } = usePrompts({
   moduleName: moduleName.value,
   moduleNameCn: moduleNameCn.value,
@@ -128,6 +180,14 @@ const changeDetailValue = (e: any) => {
   detailValue.value = e.target.value;
   localStorage.setItem('detailValue', e.target.value);
 };
+const changeAuthorization = (e: any) => {
+  authorization.value = e.target.value;
+  localStorage.setItem('authorization', e.target.value);
+};
+const handleChangeModel = (value: string) => {
+  modelValue.value = value;
+  localStorage.setItem('modelValue', value);
+};
 const allWithProgress = (requests: Promise<string[]>[], callback: () => void) => {
   requests.forEach((item) => {
     item.then(() => {
@@ -155,7 +215,9 @@ const generateAll = () => {
   progress.value = start - 1;
   const allStep = steps.map((ele) => {
     const prompts = ele?.promptGenerator?.() as string[];
-    const promiseArr = prompts.map((ele) => fetchGPTResult(ele));
+    const promiseArr = prompts.map((ele) =>
+      fetchGPTResult(authorization.value, engine.value, { message: ele, model: modelValue.value })
+    );
     return Promise.all(promiseArr);
   });
   allWithProgress(allStep, () => {
@@ -195,6 +257,11 @@ const writeBasic = () => {
   ${MODULE_NAME}_RECYCLE_BIN = '${MODULE_NAME}_RECYCLE_BIN',`;
   const typeRouterParams = `${MODULE_NAME}_ID = 'id',`;
 
+  const routerDataImport = `import { ${ModuleName}Routes } from './${moduleN}';`;
+  const routerDataValue = `    ${ModuleName}Routes`;
+
+  const cnValue = `      ${moduleN}: '转化医学',`;
+
   const promiseArr = [
     writeFileDataType({
       filepath: `${rootPath.value}/types/DataType.ts`,
@@ -210,9 +277,19 @@ const writeBasic = () => {
       filepath: `${rootPath.value}/type/router.ts`,
       content: [typeRouter, typeRouterParams],
       start: ['export const enum E_ROUTER_NAME {', 'export const enum E_ROUTER_PARAMS {']
+    }),
+    writeFileTypeRouterData({
+      filepath: `${rootPath.value}/router/data/index.ts`,
+      content: [routerDataImport, routerDataValue],
+      start: ['/** inject import here */', '/** inject routes here  */']
+    }),
+    writeFileCn({
+      filepath: `${rootPath.value}/locales/cn.ts`,
+      content: [cnValue],
+      start: ['/** inject here 勿删, 占位符 */']
     })
   ];
-  Promise.all(promiseArr).then((ele) => {
+  Promise.all(promiseArr).then(() => {
     message.success('写入成功');
   });
 };
@@ -245,6 +322,16 @@ const writeBasic = () => {
   }
   .steps {
     margin-top: 20px;
+  }
+}
+.table-modal {
+  .table-modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    h3 {
+      text-align: center;
+    }
   }
 }
 </style>

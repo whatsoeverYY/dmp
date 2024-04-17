@@ -77,6 +77,9 @@ const props = defineProps<{
   tableValue: string;
   searchValue: string;
   detailValue: string;
+  modelValue: string;
+  authorization: string;
+  engine: string;
   rootPath: string;
 }>();
 const current = ref<number>(0);
@@ -103,7 +106,9 @@ const generate = (genPrompt?: () => string[] | '', genImportPhase?: () => string
     [String(current.value)]: ''
   };
   if (isArray(prompt)) {
-    const promiseArr = prompt.map((ele) => fetchGPTResult(ele));
+    const promiseArr = prompt.map((ele) =>
+      fetchGPTResult(props.authorization, props.engine, { message: ele, model: props.modelValue })
+    );
     Promise.all(promiseArr).then((resArr) => {
       returnResult.value = {
         ...returnResult.value,
@@ -112,7 +117,10 @@ const generate = (genPrompt?: () => string[] | '', genImportPhase?: () => string
       loading.value = false;
     });
   } else {
-    fetchGPTResult(prompt).then((res: string) => {
+    fetchGPTResult(props.authorization, props.engine, {
+      message: prompt,
+      model: props.modelValue
+    }).then((res: string) => {
       returnResult.value = {
         ...returnResult.value,
         [String(current.value)]: res

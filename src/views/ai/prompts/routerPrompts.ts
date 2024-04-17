@@ -4,7 +4,7 @@ export const routerPrompt =
   basicPrompts.startPhaseWithoutTable +
   '导出常量{name}Routes，类型为CustomRouteRecord' +
   basicPrompts.templateCode +
-  "import { E_ROUTER_NAME } from '@/type/router';\n" +
+  "import { E_ROUTER_NAME, E_ROUTER_PARAMS } from '@/type/router';\n" +
   "import { CustomRouteRecord } from '@/types/routerTypes';\n" +
   "import { RouterView } from 'vue-router';\n" +
   '\n' +
@@ -18,7 +18,7 @@ export const routerPrompt =
   "    breadcrumbName: '{nameCn}',\n" +
   '    redirect: true,\n' +
   "    countKeyPath: '{name}.total',\n" +
-  "    permCode: 'data.{首字母小写(name)}',\n" +
+  "    // permCode: 'data.{首字母小写(name)}',\n" +
   '  },\n' +
   '  children: [\n' +
   '    {\n' +
@@ -28,7 +28,7 @@ export const routerPrompt =
   '      meta: {\n' +
   "        breadcrumbName: '线上列表',\n" +
   "        title: 'commonSubMenus.preview',\n" +
-  "        permCode: 'data.{name}.preview',\n" +
+  "        // permCode: 'data.{name}.preview',\n" +
   '      },\n' +
   '    },\n' +
   '    {\n' +

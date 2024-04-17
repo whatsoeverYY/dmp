@@ -34,3 +34,13 @@ export const writeFileTypeRouter = (params: {
 }) => {
   return writeFile('http://localhost:3000/write-router/', params);
 };
+export const writeFileTypeRouterData = (params: {
+  filepath: string;
+  content: string[];
+  start: string[];
+}) => {
+  return writeFile('http://localhost:3000/write-router-data/', params);
+};
+export const writeFileCn = (params: { filepath: string; content: string[]; start: string[] }) => {
+  return writeFile('http://localhost:3000/write-cn/', params);
+};

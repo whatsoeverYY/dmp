@@ -8,3 +8,12 @@ export const initial = (str: string) => {
 export const deInitial = (str: string) => {
   return str.charAt(0).toLowerCase() + str.slice(1);
 };
+
+export const matchCode = (str: string): string => {
+  const regex = /```(?:\w+)?\s([\s\S]*?)```/g;
+  const match = regex.exec(str);
+  if (match) {
+    return match?.[1] as string;
+  }
+  return str;
+};
