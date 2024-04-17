@@ -17,3 +17,21 @@ export const matchCode = (str: string): string => {
   }
   return str;
 };
+
+export const extractTableColumns = (mdTable: string) => {
+  // 切分表格内容为行
+  const rows = mdTable.trim().split('\n');
+
+  // 提取前两列数据
+  const data = rows.map((row) => {
+    // 通过竖线分割行
+    const columns = row.split('|');
+    // 过滤掉空格和首尾空列
+    const filteredColumns = columns.map((col) => col.trim()).filter((col) => col !== '');
+    // 取前两列数据
+    return `| ${filteredColumns[0]} | ${filteredColumns[1]} |`;
+  });
+
+  // 返回Markdown格式的前两列数据
+  return data.join('\n');
+};

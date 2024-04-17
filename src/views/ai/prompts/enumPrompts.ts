@@ -42,7 +42,7 @@ const detailPrompt =
   basicPrompts.noImports +
   basicPrompts.endPhase;
 
-export const enumPrompt = [
+export const enumPrompts = [
   { prompt: listPrompt, tableType: 'table' },
   { prompt: searchPrompt, tableType: 'search' },
   { prompt: detailPrompt, tableType: 'detail' }

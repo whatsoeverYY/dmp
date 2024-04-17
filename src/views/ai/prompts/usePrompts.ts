@@ -1,4 +1,4 @@
-import { deInitial } from '@/utils';
+import { deInitial, extractTableColumns } from '@/utils';
 import { importPhases } from '@/views/ai/importPhases/importPhases';
 import { actionPrompts } from '@/views/ai/prompts/actionPrompts';
 import { apiPrompt } from '@/views/ai/prompts/apiPrompts';
@@ -9,7 +9,7 @@ import { editablePrompt } from '@/views/ai/prompts/editablePrompts';
 import { editPagePrompts } from '@/views/ai/prompts/editPagePrompts';
 import { editPrompts } from '@/views/ai/prompts/editPrompts';
 import { entityPrompts } from '@/views/ai/prompts/entityPrompts';
-import { enumPrompt } from '@/views/ai/prompts/enumPrompts';
+import { enumPrompts } from '@/views/ai/prompts/enumPrompts';
 import { formRulePrompts } from '@/views/ai/prompts/formRulePrompts';
 import { listColumnsPrompts } from '@/views/ai/prompts/listColumnsPrompts';
 import { localePrompts } from '@/views/ai/prompts/localePrompts';
@@ -22,6 +22,7 @@ import { searchFormPrompts } from '@/views/ai/prompts/searchFormPrompts';
 import { servicePrompt } from '@/views/ai/prompts/servicePrompts';
 import { transformPrompts } from '@/views/ai/prompts/transformPrompts';
 import { typePrompt } from '@/views/ai/prompts/typePrompts';
+import { enumPrompt } from '@/views/ai/prompts/updated/enumPrompt';
 import { isArray } from 'ant-design-vue/es/_util/util';
 import { computed } from 'vue';
 
@@ -93,6 +94,28 @@ export function usePrompts(props: {
         return generatePrompt(entityPrompts);
       }
     },
+    // {
+    //   key: 'step3',
+    //   title: '生成enum',
+    //   fileName: () => `enum.ts`,
+    //   filePath: () => `/domains/${deInitial(props.moduleName)}Domain`,
+    //   basePrompt: enumPrompts,
+    //   promptGenerator: () => {
+    //     if (!props.tableValue) {
+    //       alert('请填写列表字段表格信息');
+    //       return '';
+    //     }
+    //     if (!props.searchValue) {
+    //       alert('请填写检索字段表格信息');
+    //       return '';
+    //     }
+    //     if (!props.detailValue) {
+    //       alert('请填写详情字段表格信息');
+    //       return '';
+    //     }
+    //     return generatePrompt(enumPrompts);
+    //   }
+    // },
     {
       key: 'step3',
       title: '生成enum',
@@ -112,7 +135,8 @@ export function usePrompts(props: {
           alert('请填写详情字段表格信息');
           return '';
         }
-        return generatePrompt(enumPrompt);
+        const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${props.searchValue}\n详情字段表格：\n${props.detailValue}\n`;
+        return generatePrompt(enumPrompt, endPrompt);
       }
     },
     {
@@ -246,7 +270,7 @@ export function usePrompts(props: {
       filePath: () => `/views/${deInitial(props.moduleName)}`,
       basePrompt: previewPrompts,
       promptGenerator: () => {
-        const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${props.searchValue}\n`;
+        const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${extractTableColumns(props.searchValue)}\n`;
         return generatePrompt(previewPrompts, endPrompt);
       }
     },
@@ -257,7 +281,7 @@ export function usePrompts(props: {
       filePath: () => `/views/${deInitial(props.moduleName)}`,
       basePrompt: editPrompts,
       promptGenerator: () => {
-        const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${props.searchValue}\n`;
+        const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${extractTableColumns(props.searchValue)}\n`;
         return generatePrompt(editPrompts, endPrompt);
       }
     },
@@ -268,7 +292,7 @@ export function usePrompts(props: {
       filePath: () => `/views/${deInitial(props.moduleName)}`,
       basePrompt: recyclePrompts,
       promptGenerator: () => {
-        const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${props.searchValue}\n`;
+        const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${extractTableColumns(props.searchValue)}\n`;
         return generatePrompt(recyclePrompts, endPrompt);
       }
     },
