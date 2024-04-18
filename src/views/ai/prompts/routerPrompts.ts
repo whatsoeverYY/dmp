@@ -18,7 +18,7 @@ export const routerPrompt =
   "    breadcrumbName: '{nameCn}',\n" +
   '    redirect: true,\n' +
   "    countKeyPath: '{name}.total',\n" +
-  "    // permCode: 'data.{首字母小写(name)}',\n" +
+  "    // permCode: 'data.{小写下划线(name)}',\n" +
   '  },\n' +
   '  children: [\n' +
   '    {\n' +
@@ -28,7 +28,7 @@ export const routerPrompt =
   '      meta: {\n' +
   "        breadcrumbName: '线上列表',\n" +
   "        title: 'commonSubMenus.preview',\n" +
-  "        // permCode: 'data.{name}.preview',\n" +
+  "        // permCode: 'data.{小写下划线(name)}.preview',\n" +
   '      },\n' +
   '    },\n' +
   '    {\n' +
@@ -39,7 +39,7 @@ export const routerPrompt =
   '      meta: {\n' +
   "        breadcrumbName: '线下编辑列表',\n" +
   "        title: 'commonSubMenus.editing',\n" +
-  "        // permCode: 'data.{首字母小写(name)}.preview',\n" +
+  "        // permCode: 'data.{小写下划线(name)}.edit_list',\n" +
   '      },\n' +
   '    },\n' +
   '    {\n' +
@@ -50,7 +50,7 @@ export const routerPrompt =
   '      meta: {\n' +
   "        breadcrumbName: '回收站',\n" +
   "        title: 'commonSubMenus.recycleBin',\n" +
-  "        // permCode: 'data.{首字母小写(name)}.preview',\n" +
+  "        // permCode: 'data.{小写下划线(name)}.recycle_bin',\n" +
   '      },\n' +
   '    },\n' +
   '    {\n' +

@@ -44,6 +44,7 @@
             :options="options"
             @change="handleChangeModel as any"
           />
+          <div>Engine: {{ engine }}</div>
           <Input
             placeholder="请输入token"
             v-model:value="authorization"
@@ -133,6 +134,8 @@ const authorization = ref(localStorage.getItem('authorization') || '');
 const engine = computed((): string => {
   if (modelValue.value?.includes('claude')) {
     return 'anthropic';
+  } else if (modelValue.value === 'gpt-4-turbo') {
+    return 'openai';
   } else if (modelValue.value?.includes('gpt')) {
     return 'azure';
   }
@@ -144,10 +147,12 @@ const progress = ref(0);
 const options = [
   { value: 'claude-3-haiku', label: 'claude-3-haiku' },
   { value: 'claude-3-sonnet', label: 'claude-3-sonnet' },
+  { value: 'claude-3-opus', label: 'claude-3-opus' },
   { value: 'gemini-1.5-pro-preview-0409', label: 'gemini-1.5-pro-preview-0409' },
   { value: 'gpt-3.5-turbo', label: 'gpt-3.5-turbo' },
   { value: 'gpt-3.5-turbo-16k', label: 'gpt-3.5-turbo-16k' },
-  { value: 'gpt-4', label: 'gpt-4' }
+  { value: 'gpt-4', label: 'gpt-4' },
+  { value: 'gpt-4-turbo', label: 'gpt-4-turbo' }
 ];
 const { steps } = usePrompts({
   moduleName: moduleName.value,

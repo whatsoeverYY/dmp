@@ -9,7 +9,6 @@ import { editablePrompt } from '@/views/ai/prompts/editablePrompts';
 import { editPagePrompts } from '@/views/ai/prompts/editPagePrompts';
 import { editPrompts } from '@/views/ai/prompts/editPrompts';
 import { entityPrompts } from '@/views/ai/prompts/entityPrompts';
-import { enumPrompts } from '@/views/ai/prompts/enumPrompts';
 import { formRulePrompts } from '@/views/ai/prompts/formRulePrompts';
 import { listColumnsPrompts } from '@/views/ai/prompts/listColumnsPrompts';
 import { localePrompts } from '@/views/ai/prompts/localePrompts';
