@@ -5,15 +5,15 @@ export const servicePrompt =
   '类名为{name}DomainService，其中定义两个函数分别为getList和getDetail，函数入参及其类型定义、函数体如下示例\n' +
   basicPrompts.templateCode +
   'import {\n' +
-  '  getDynamodbTranslationalMedicineList,\n' +
-  '  getPgTranslationalMedicineList,\n' +
-  '  getPgTranslationalMedicineDetail,\n' +
-  '  getDynamodbTranslationalMedicineDetail,\n' +
-  "} from '@/apis/translationalMedicine';\n" +
+  '  getDynamodb{name}List,\n' +
+  '  getPg{name}List,\n' +
+  '  getPg{name}Detail,\n' +
+  '  getDynamodb{name}Detail,\n' +
+  "} from '@/apis/{首字母小写(name)}';\n" +
   "import { DATA_SOURCE } from '@/constants/enum';\n" +
   "import { BaseDomainService } from '@/domains/baseDomain';\n" +
-  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
-  "import { TranslationalMedicineSearchFormParams } from '@/types/TranslationalMedicineType';\n" +
+  "import { {name}Entity } from '@/domains/{首字母小写(name)}Domain/entity';\n" +
+  "import { {name}SearchFormParams } from '@/types/{name}Type';\n" +
   "import { transformSearchForm2PostData } from './transform';\n" +
   '\n' +
   "import { transformSearchForm2PostData } from './transform';\n" +

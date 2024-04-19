@@ -8,9 +8,9 @@ export const apiPrompt =
   "import { IHttpWrap } from '@/service/http';\n" +
   "import { BaseListResponse } from '@/types/BaseTypes';\n" +
   'import {\n' +
-  '  TranslationalMedicineSearchParams,\n' +
-  '  TranslationalMedicineDto,\n' +
-  "} from '@/types/TranslationalMedicineType';\n" +
+  '  {name}SearchParams,\n' +
+  '  {name}Dto,\n' +
+  "} from '@/types/{name}Type';\n" +
   "import { removeEmptyStringAnfEmptyArray } from '@/utils/common';\n" +
   "import { addUrlPrefix } from '@/utils/http';\n" +
   '\n' +

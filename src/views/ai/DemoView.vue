@@ -71,6 +71,7 @@
         :model-value="modelValue"
         :authorization="authorization"
         :engine="engine"
+        :token="token"
         :root-path="rootPath"
         v-model:resultRecord="resultRecord"
       />
@@ -134,27 +135,23 @@ const modelValue = ref(localStorage.getItem('modelValue') || undefined);
 const authorization = ref(localStorage.getItem('authorization') || '');
 const resultRecord = ref<Record<string, string>>({});
 const engine = computed((): string => {
-  if (modelValue.value?.includes('claude')) {
-    return 'anthropic';
-  } else if (modelValue.value === 'gpt-4-turbo') {
-    return 'openai';
-  } else if (modelValue.value?.includes('gpt')) {
-    return 'azure';
-  }
-  return 'google';
+  return options.find((opt) => opt.value === modelValue.value)?.engine || 'azure';
+});
+const token = computed((): number => {
+  return options.find((opt) => opt.value === modelValue.value)?.token || 4096;
 });
 const loading = ref(false);
 const tableModalVisible = ref(false);
 const progress = ref(0);
 const options = [
-  { value: 'claude-3-haiku', label: 'claude-3-haiku' },
-  { value: 'claude-3-sonnet', label: 'claude-3-sonnet' },
-  { value: 'claude-3-opus', label: 'claude-3-opus' },
-  { value: 'gemini-1.5-pro-preview-0409', label: 'gemini-1.5-pro-preview-0409' },
-  { value: 'gpt-3.5-turbo', label: 'gpt-3.5-turbo' },
-  { value: 'gpt-3.5-turbo-16k', label: 'gpt-3.5-turbo-16k' },
-  { value: 'gpt-4', label: 'gpt-4' },
-  { value: 'gpt-4-turbo', label: 'gpt-4-turbo' }
+  { value: 'claude-3-haiku', label: 'claude-3-haiku', engine: 'anthropic' },
+  { value: 'claude-3-sonnet', label: 'claude-3-sonnet', engine: 'anthropic' },
+  { value: 'claude-3-opus', label: 'claude-3-opus', engine: 'anthropic' },
+  { value: 'gemini-1.5-pro-preview-0409', label: 'gemini-1.5-pro-preview-0409', engine: 'google' },
+  { value: 'gpt-3.5-turbo', label: 'gpt-3.5-turbo', engine: 'azure' },
+  { value: 'gpt-3.5-turbo-16k', label: 'gpt-3.5-turbo-16k', engine: 'azure' },
+  { value: 'gpt-4', label: 'gpt-4', engine: 'azure' },
+  { value: 'gpt-4-turbo', label: 'gpt-4-turbo', engine: 'openai' }
 ];
 const { steps } = usePrompts({
   moduleName: moduleName.value,
@@ -223,7 +220,11 @@ const generateAll = () => {
   const allStep = steps.map((ele) => {
     const prompts = ele?.promptGenerator?.() as string[];
     const promiseArr = prompts.map((ele) =>
-      fetchGPTResult(authorization.value, engine.value, { message: ele, model: modelValue.value })
+      fetchGPTResult(authorization.value, engine.value, {
+        message: ele,
+        model: modelValue.value,
+        max_tokens: token.value
+      })
     );
     return Promise.all(promiseArr);
   });

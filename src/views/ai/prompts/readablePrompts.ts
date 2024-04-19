@@ -4,8 +4,8 @@ export const readablePrompt =
   basicPrompts.startPhaseWithoutTable +
   basicPrompts.templateCode +
   "import { ReadableFieldFunc } from '@/components/business/DocEditV2/DocEditType';\n" +
-  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
-  "import { E_TRANSLATIONAL_MEDICINE_DOC_ITEMS } from '@/domains/translationalMedicineDomain/enum';\n" +
+  "import { {name}Entity } from '@/domains/{首字母小写(name)}Domain/entity';\n" +
+  "import { E_{大写下划线(name)}_DOC_ITEMS } from '@/domains/{首字母小写(name)}Domain/enum';\n" +
   '\n' +
   'export type {name}ReadableFieldFunc =\n' +
   '  ReadableFieldFunc<{name}Entity>;\n' +

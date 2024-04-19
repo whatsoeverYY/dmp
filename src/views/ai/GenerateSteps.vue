@@ -81,6 +81,7 @@ const props = defineProps<{
   modelValue: string;
   authorization: string;
   engine: string;
+  token: number;
   rootPath: string;
   resultRecord: Record<string, string>;
 }>();
@@ -107,7 +108,11 @@ const generate = (genPrompt?: () => string[] | '') => {
     [String(current.value)]: ''
   });
   const promiseArr = prompt.map((ele) =>
-    fetchGPTResult(props.authorization, props.engine, { message: ele, model: props.modelValue })
+    fetchGPTResult(props.authorization, props.engine, {
+      message: ele,
+      model: props.modelValue,
+      max_tokens: props.token
+    })
   );
   Promise.all(promiseArr).then(
     (resArr) => {

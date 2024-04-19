@@ -15,7 +15,7 @@ const entityPrompt =
   basicPrompts.templateCode +
   "import { BaseReadableEntity, BaseEditableEntity } from '@/domains/baseDomain';\n" +
   "import { E_DATA_TYPE } from '@/types/DataType';\n" +
-  "import { TranslationalMedicineDto } from '@/types/TranslationalMedicineType';\n" +
+  "import { {name}eDto } from '@/types/{name}Type';\n" +
   "import { DataTypeEnum, DATA_TYPE_ENUM } from '@/utils/dataType';\n" +
   '\n' +
   'export class XXXEntity extends BaseReadableEntity<XXXDto> implements BaseEditableEntity<XXXDto> {\n' +

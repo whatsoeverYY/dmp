@@ -41,9 +41,9 @@ const searchPrompt =
   '  genEnCnLabel,\n' +
   "} from '@/constants/business/autocompleteApiV2';\n" +
   "import { E_BASE_SEARCH_PARAMS } from '@/domains/baseDomain/base.enum';\n" +
-  "import { E_TRANSLATIONAL_MEDICINE_SEARCH_PARAMS } from '@/domains/translationalMedicineDomain/enum';\n" +
+  "import { E_{大写下划线(name)}_SEARCH_PARAMS } from '@/domains/{首字母小写(name)}Domain/enum';\n" +
   "import { DICTYPENAMES, E_TIME_FORMAT } from '@/type/enum';\n" +
-  "import { TranslationalMedicineSearchFormParams } from '@/types/TranslationalMedicineType';\n" +
+  "import { {name}SearchFormParams } from '@/types/{name}Type';\n" +
   "import { MaybeRef } from '@vueuse/core';\n" +
   "import { DatePicker } from 'ant-design-vue';\n" +
   '\n' +

@@ -3,7 +3,7 @@ import { matchCode } from '@/utils/index';
 export const fetchGPTResult = async (
   authorization: string,
   engine: string,
-  param: { message: string; model?: string; temperature?: number }
+  param: { message: string; model?: string; max_tokens?: number; temperature?: number }
 ): Promise<{ code?: string; message?: string }> => {
   return new Promise((resolve, reject) => {
     const bodyParams = {

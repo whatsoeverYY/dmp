@@ -8,8 +8,8 @@ const tablePrompt =
   basicPrompts.templateCode +
   "import { GTableColumn } from '@/components/business/Table/type';\n" +
   "import { useTableListProcessUnit } from '@/compositions/lowcodeConfig/useTableListProcessUnit';\n" +
-  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
-  "import { E_TRANSLATIONAL_MEDICINE_LIST_COLUMNS } from '@/domains/translationalMedicineDomain/enum';\n" +
+  "import { {name}Entity } from '@/domains/{首字母小写(name)}Domain/entity';\n" +
+  "import { E_{大写下划线(name)}_LIST_COLUMNS } from '@/domains/{首字母小写(name)}Domain/enum';\n" +
   "import { PartialRecord } from '@/types/BaseTypes';\n" +
   '\n' +
   'export function useXXXListColumns() {\n' +

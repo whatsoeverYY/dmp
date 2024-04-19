@@ -11,7 +11,7 @@ export const formRulePrompts =
   "import { useLocale } from '@/compositions/useLocale';\n" +
   "import { useRouteIsProd } from '@/compositions/useRouteInfo';\n" +
   "import { IFromValidatorItem } from '@/constants/business/formValidator';\n" +
-  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
+  "import { {name}Entity } from '@/domains/{首字母小写(name)}Domain/entity';\n" +
   "import { E_ROUTER_NAME } from '@/type/router';\n" +
   "import { PartialRecord } from '@/types/BaseTypes';\n" +
   "import { MaybeRef } from '@vueuse/core';\n" +

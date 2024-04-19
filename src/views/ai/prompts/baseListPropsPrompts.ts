@@ -9,14 +9,14 @@ export const baseListPropsPrompts =
   '  E_BASE_LIST_BUTTON_NAME,\n' +
   "} from '@/domains/baseDomain';\n" +
   "import { E_BASE_SEARCH_PARAMS } from '@/domains/baseDomain/base.enum';\n" +
-  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
+  "import { {name}Entity } from '@/domains/{首字母小写(name)}Domain/entity';\n" +
   'import {\n' +
-  '  E_TRANSLATIONAL_MEDICINE_LIST_COLUMNS,\n' +
-  '  E_TRANSLATIONAL_MEDICINE_SEARCH_PARAMS,\n' +
-  "} from '@/domains/translationalMedicineDomain/enum';\n" +
+  '  E_{大写下划线(name)}_LIST_COLUMNS,\n' +
+  '  E_{大写下划线(name)}_SEARCH_PARAMS,\n' +
+  "} from '@/domains/{首字母小写(name)}Domain/enum';\n" +
   "import { E_PERMISSION } from '@/type/enum';\n" +
   "import { baseListPageProps } from '@/types/BaseProps';\n" +
-  "import { TranslationalMedicineSearchFormParams } from '@/types/TranslationalMedicineType';\n" +
+  "import { {name}SearchFormParams } from '@/types/{name}Type';\n" +
   "import { defineComponentProps } from '@/utils/base';\n" +
   "import { PropType, ExtractPropTypes } from 'vue';\n" +
   '\n' +

@@ -19,8 +19,8 @@ const detailPrompt =
   "import { E_BASE_DOC_EDIT_FORM } from '@/components/business/DocEditV2/enum';\n" +
   "import { useDocEditProcessUnit } from '@/compositions/lowcodeConfig/useDocEditProcessUnit';\n" +
   "import { PreFilterConfigType } from '@/compositions/lowcodeConfig/utils';\n" +
-  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
-  "import { E_TRANSLATIONAL_MEDICINE_DOC_ITEMS } from '@/domains/translationalMedicineDomain/enum';\n" +
+  "import { {name}Entity } from '@/domains/{首字母小写(name)}Domain/entity';\n" +
+  "import { E_{大写下划线(name)}_DOC_ITEMS } from '@/domains/{首字母小写(name)}Domain/enum';\n" +
   "import { renderEditableField } from '../config/renderEditableField';\n" +
   "import { renderReadableField } from '../config/renderReadableField';\n" +
   '\n' +

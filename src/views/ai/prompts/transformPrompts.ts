@@ -11,9 +11,9 @@ const transformPrompt =
   basicPrompts.templateCode +
   "import { baseTransformSearchForm2PostData } from '@/domains/baseDomain';\n" +
   'import {\n' +
-  '  TranslationalMedicineSearchFormParams,\n' +
-  '  TranslationalMedicineSearchParams,\n' +
-  "} from '@/types/TranslationalMedicineType';\n" +
+  '  {name}SearchFormParams,\n' +
+  '  {name}SearchParams,\n' +
+  "} from '@/types/{name}Type';\n" +
   "import { handleAutoCompleteValue } from '@/utils/drugHelper';\n" +
   "import { getTimeRange } from '@/utils/getTimeRange';\n" +
   '\n' +

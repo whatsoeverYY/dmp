@@ -9,12 +9,12 @@ export const baseListPagePrompts =
   "import { PaginationTable } from '@/components/business/Table/PaginationTable';\n" +
   "import { GCollapseFormLayout } from '@/components/layout/CollapseFormLayout/CollapseFormLayout';\n" +
   "import { SearchForm } from '@/components/SearchForm';\n" +
-  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
-  "import { baseTranslationalMedicineListPageProps } from '@/views/translationalMedicine/BaseTranslationalMedicineListPageProps';\n" +
-  "import { useTranslationalMedicineAction } from '@/views/translationalMedicine/composition/useTranslationalMedicineAction';\n" +
-  "import { useTranslationalMedicineListColumns } from '@/views/translationalMedicine/composition/useTranslationalMedicineListColumns';\n" +
-  "import { useTranslationalMedicineSearchAction } from '@/views/translationalMedicine/composition/useTranslationalMedicineSearchAction';\n" +
-  "import { useTranslationalMedicineSearchFormItems } from '@/views/translationalMedicine/composition/useTranslationalMedicineSearchFormItems';\n" +
+  "import { {name}Entity } from '@/domains/{首字母小写(name)}Domain/entity';\n" +
+  "import { base{name}ListPageProps } from '@/views/{首字母小写(name)}/Base{name}ListPageProps';\n" +
+  "import { use{name}Action } from '@/views/{首字母小写(name)}/composition/use{name}Action';\n" +
+  "import { use{name}ListColumns } from '@/views/{首字母小写(name)}/composition/use{name}ListColumns';\n" +
+  "import { use{name}SearchAction } from '@/views/{首字母小写(name)}/composition/use{name}SearchAction';\n" +
+  "import { use{name}SearchFormItems } from '@/views/{首字母小写(name)}/composition/use{name}SearchFormItems';\n" +
   "import cn from './locales/cn';\n" +
   "import { defineComponent, computed } from 'vue';\n" +
   '\n' +

@@ -16,13 +16,15 @@ export const editPrompts =
   '  E_BASE_TABLE_COLUMN,\n' +
   "} from '@/domains/baseDomain/base.enum';\n" +
   'import {\n' +
-  '  E_TRANSLATIONAL_MEDICINE_SEARCH_PARAMS,\n' +
-  '  E_TRANSLATIONAL_MEDICINE_LIST_COLUMNS,\n' +
-  "} from '@/domains/translationalMedicineDomain/enum';\n" +
+  '  E_{大写下划线(name)}_SEARCH_PARAMS,\n' +
+  '  E_{大写下划线(name)}_LIST_COLUMNS,\n' +
+  "} from '@/domains/{首字母小写(name)}Domain/enum';\n" +
   "import { E_PERMISSION } from '@/type/enum';\n" +
   "import { DATA_STATUS } from '@/types/DrugTypes';\n" +
-  "import { BaseTranslationalMedicineListPage } from '@/views/translationalMedicine/BaseTranslationalMedicineListPage';\n" +
+  "import { Base{name}ListPage } from '@/views/{首字母小写(name)}/Base{name}ListPage';\n" +
   "import { defineComponent } from 'vue';\n" +
+  "import { useRoute, useRouter } from 'vue-router';\n" +
+  "import cn from '../locales/cn';\n" +
   '\n' +
   'export default defineComponent({\n' +
   "name: '{name}EditList',\n" +

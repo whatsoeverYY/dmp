@@ -13,12 +13,12 @@ export const searchActionPrompts =
   '  baseColumnRecord,\n' +
   '  E_BASE_LIST_BUTTON_NAME,\n' +
   "} from '@/domains/baseDomain';\n" +
-  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
-  "import { TranslationalMedicineService } from '@/domains/translationalMedicineDomain/service';\n" +
+  "import { {name}Entity } from '@/domains/{首字母小写(name)}Domain/entity';\n" +
+  "import { {name}Service } from '@/domains/{首字母小写(name)}Domain/service';\n" +
   "import { E_ROUTER_NAME, E_ROUTER_PARAMS } from '@/type/router';\n" +
-  "import { TranslationalMedicineSearchParams } from '@/types/TranslationalMedicineType';\n" +
+  "import { {name}SearchParams } from '@/types/{name}Type';\n" +
   "import { getDecodeQuery } from '@/utils/sourceHelper';\n" +
-  "import { BaseTranslationalMedicineListPageProps } from '@/views/translationalMedicine/BaseTranslationalMedicineListPageProps';\n" +
+  "import { Base{name}ListPageProps } from '@/views/{首字母小写(name)}/Base{name}ListPageProps';\n" +
   "import { computed } from 'vue';\n" +
   "import { RouteLocationNormalized } from 'vue-router';\n" +
   '\n' +

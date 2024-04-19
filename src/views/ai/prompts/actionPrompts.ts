@@ -12,7 +12,7 @@ export const actionPrompts =
   '  ListOperate,\n' +
   '  useCommonListOperate,\n' +
   "} from '@/compositions/useCommonListOperate';\n" +
-  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
+  "import { {name}Entity } from '@/domains/{首字母小写(name)}Domain/entity';\n" +
   "import { E_PERMISSION } from '@/type/enum';\n" +
   "import { E_ROUTER_PARAMS, E_ROUTER_NAME } from '@/type/router';\n" +
   "import { DATA_STATUS } from '@/types/DrugTypes';\n" +

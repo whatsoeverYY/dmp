@@ -25,17 +25,17 @@ const detailPrompt =
   '  useRouteDataSource,\n' +
   '  useRouteReadMode,\n' +
   "} from '@/compositions/useRouteInfo';\n" +
-  "import { TranslationalMedicineEntity } from '@/domains/translationalMedicineDomain/entity';\n" +
-  "import { E_TRANSLATIONAL_MEDICINE_DOC_ITEMS } from '@/domains/translationalMedicineDomain/enum';\n" +
-  "import { TranslationalMedicineService } from '@/domains/translationalMedicineDomain/service';\n" +
+  "import { {name}Entity } from '@/domains/{首字母小写(name)}Domain/entity';\n" +
+  "import { E_{大写下划线(name)}_DOC_ITEMS } from '@/domains/{首字母小写(name)}Domain/enum';\n" +
+  "import { {name}Service } from '@/domains/{首字母小写(name)}Domain/service';\n" +
   "import { getDataCountStore } from '@/store';\n" +
   "import { E_PERMISSION } from '@/type/enum';\n" +
   "import { E_ROUTER_PARAMS, E_ROUTER_NAME } from '@/type/router';\n" +
   "import { getGoBackLocation } from '@/utils/route';\n" +
   "import OperateHistory from '@/views/drugs/components/OperateHistory';\n" +
-  "import { useTranslationalMedicineAction } from '@/views/translationalMedicine/composition/useTranslationalMedicineAction';\n" +
-  "import { useTranslationalMedicineDocEdit } from '@/views/translationalMedicine/composition/useTranslationalMedicineDocEdit';\n" +
-  "import { useTranslationalMedicineFormRule } from '@/views/translationalMedicine/composition/useTranslationalMedicineFormRule';\n" +
+  "import { use{name}Action } from '@/views/{首字母小写(name)}/composition/use{name}Action';\n" +
+  "import { use{name}DocEdit } from '@/views/{首字母小写(name)}/composition/use{name}DocEdit';\n" +
+  "import { use{name}FormRule } from '@/views/{首字母小写(name)}/composition/use{name}FormRule';\n" +
   "import { defineComponent, unref, computed } from 'vue';\n" +
   "import { useRoute, useRouter } from 'vue-router';\n" +
   "import cn from '../locales/cn';\n" +
@@ -58,7 +58,7 @@ const detailPrompt =
   ');\n' +
   'const { actions: dataCountStoreActions } = getDataCountStore();\n' +
   '\n' +
-  'const { appDocItems } = useTranslationalMedicineDocEdit({\n' +
+  'const { appDocItems } = use{name}DocEdit({\n' +
   '  configList: preFilterConfig([\n' +
   '    {待补充数据示例：E_{转下划线大写(name)}_DOC_ITEMS.XX_XX,},\n' +
   '    unref(isReadMode) && E_BASE_DOC_EDIT_FORM.CREATED_BY,\n' +
