@@ -50,7 +50,7 @@ const searchPrompt =
   'type XXXSearchFormConfig =\n' +
   'SearchFormConfigItem<XXXSearchFormParams>;\n' +
   'const RangePicker = DatePicker.RangePicker;\n' +
-  'export function useXXXSearchFormItems(\n' +
+  'export function use{name}SearchFormItems(\n' +
   'configList?: MaybeRef<\n' +
   '(E_X_X_SEARCH_PARAMS | E_BASE_SEARCH_PARAMS)[]\n' +
   '>\n' +

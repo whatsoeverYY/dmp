@@ -234,4 +234,4 @@ const detailPrompt =
   basicPrompts.importPhaseRule +
   basicPrompts.endPhase;
 
-export const editPagePrompts = [{ prompt: detailPrompt, tableType: 'detail' }];
+export const editPagePrompts = [{ prompt: detailPrompt, tableType: 'detail', columnIndex: [0] }];

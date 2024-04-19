@@ -12,7 +12,7 @@ const tablePrompt =
   "import { E_{大写下划线(name)}_LIST_COLUMNS } from '@/domains/{首字母小写(name)}Domain/enum';\n" +
   "import { PartialRecord } from '@/types/BaseTypes';\n" +
   '\n' +
-  'export function useXXXListColumns() {\n' +
+  'export function use{name}ListColumns() {\n' +
   'const columnConfig: PartialRecord<\n' +
   'E_XX_XX_LIST_COLUMNS,\n' +
   'GTableColumn<XXXEntity, E_XX_XX_LIST_COLUMNS>\n' +

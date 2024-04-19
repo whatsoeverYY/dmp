@@ -2,7 +2,7 @@ import { basicPrompts } from '@/views/ai/prompts/basicPrompts';
 
 export const baseListPagePrompts =
   basicPrompts.startPhaseWithoutTable +
-  '导出常量Base{name}ListPage，值为一个component\n' +
+  '导出Base{name}ListPage，值为一个component\n' +
   '所有的{name}均需要根据给定值进行替换。\n' +
   basicPrompts.templateCode +
   "import { ActionButtonPermGroup } from '@/components/business/Table/ActionButtons';\n" +
@@ -18,19 +18,19 @@ export const baseListPagePrompts =
   "import cn from './locales/cn';\n" +
   "import { defineComponent, computed } from 'vue';\n" +
   '\n' +
-  'export const BaseXXXListPage = defineComponent({\n' +
-  "name: 'BaseXXXListPage',\n" +
+  'export const Base{name}ListPage = defineComponent({\n' +
+  "name: 'Base{name}ListPage',\n" +
   'i18n: {\n' +
   'messages: {\n' +
   'cn,\n' +
   '},\n' +
   '},\n' +
-  'props: baseXXXListPageProps(),\n' +
+  'props: base{name}ListPageProps(),\n' +
   'setup(props) {\n' +
-  'const { appSearchFormItems } = useXXXSearchFormItems(\n' +
+  'const { appSearchFormItems } = use{name}SearchFormItems(\n' +
   'computed(() => props.formItemConfig)\n' +
   ');\n' +
-  'const { tableListConfig } = useXXXListColumn();\n' +
+  'const { tableListConfig } = use{name}ListColumn();\n' +
   'const {\n' +
   'loading,\n' +
   'list,\n' +
@@ -48,9 +48,9 @@ export const baseListPagePrompts =
   '  onSortChange,\n' +
   '\n' +
   '  appSearchActions,\n' +
-  '} = useXXXSearchAction(props);\n' +
+  '} = use{name}SearchAction(props);\n' +
   '\n' +
-  'const { appActions } = useXXXAction({\n' +
+  'const { appActions } = use{name}Action({\n' +
   '  onAfterAction,\n' +
   '  resetChecked,\n' +
   '  dataSource: props.dataSource,\n' +

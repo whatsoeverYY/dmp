@@ -28,7 +28,7 @@ export const editPrompts =
   "name: '{name}EditList',\n" +
   'setup() {\n' +
   'const formItemConfig = [\n' +
-  'E_{转下划线大写(name)}_SEARCH_PARAMS.{大写(检索字段表格中的检索字段名)},\n' +
+  'E_{转下划线大写(name)}_SEARCH_PARAMS.XX_XX,\n' +
   'E_BASE_SEARCH_PARAMS.CREATED_BY,\n' +
   'E_BASE_SEARCH_PARAMS.CREATED_TIME_RANGE,\n' +
   'E_BASE_SEARCH_PARAMS.UPDATED_BY,\n' +
@@ -39,7 +39,7 @@ export const editPrompts =
   'E_BASE_LIST_BUTTON_NAME.RESET,\n' +
   '];\n' +
   'const columns = [\n' +
-  'E_{转下划线大写(name)}_LIST_COLUMNS.{大写(列表字段)},\n' +
+  'E_{转下划线大写(name)}_LIST_COLUMNS.XX_XX,\n' +
   'E_BASE_TABLE_COLUMN.CREATED_TS,\n' +
   'E_BASE_TABLE_COLUMN.CREATED_BY,\n' +
   'E_BASE_TABLE_COLUMN.UPDATED_TS,\n' +

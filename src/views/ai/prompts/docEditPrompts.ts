@@ -24,7 +24,7 @@ const detailPrompt =
   "import { renderEditableField } from '../config/renderEditableField';\n" +
   "import { renderReadableField } from '../config/renderReadableField';\n" +
   '\n' +
-  'export function useXXXDocEdit(opt: {\n' +
+  'export function use{name}DocEdit(opt: {\n' +
   'configList: PreFilterConfigType<\n' +
   'E_XX_XX_DOC_ITEMS | E_BASE_DOC_EDIT_FORM\n' +
   '\n' +

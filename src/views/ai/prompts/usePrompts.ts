@@ -81,7 +81,7 @@ export function usePrompts(props: {
           alert('请填写检索字段表格信息');
           return '';
         }
-        const emdPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${extractTableColumns(props.searchValue, [0, 3])}\n`;
+        const emdPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${extractTableColumns(props.searchValue, [0, 1, 2, 3])}\n`;
         return generatePrompt(typePrompt, emdPrompt);
       }
     },
