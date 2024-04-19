@@ -1,5 +1,4 @@
 import { deInitial, extractTableColumns } from '@/utils';
-import { importPhases } from '@/views/ai/importPhases/importPhases';
 import { actionPrompts } from '@/views/ai/prompts/actionPrompts';
 import { apiPrompt } from '@/views/ai/prompts/apiPrompts';
 import { baseListPagePrompts } from '@/views/ai/prompts/baseListPagePrompts';
@@ -20,8 +19,8 @@ import { searchActionPrompts } from '@/views/ai/prompts/searchActionPrompts';
 import { searchFormPrompts } from '@/views/ai/prompts/searchFormPrompts';
 import { servicePrompt } from '@/views/ai/prompts/servicePrompts';
 import { transformPrompts } from '@/views/ai/prompts/transformPrompts';
-import { typePrompt } from '@/views/ai/prompts/typePrompts';
 import { enumPrompt } from '@/views/ai/prompts/updated/enumPrompt';
+import { typePrompt } from '@/views/ai/prompts/updated/typePrompt';
 import { isArray } from 'ant-design-vue/es/_util/util';
 import { computed } from 'vue';
 
@@ -34,7 +33,7 @@ export function usePrompts(props: {
 }) {
   const variablePrompt = computed(() => `name=${props.moduleName}`);
 
-  const getTablePrompt = (type: string) => {
+  const getTablePrompt = (type: string, columnIndex?: number[]) => {
     let resTable = '';
     if (type === 'table') {
       resTable = props.tableValue;
@@ -45,20 +44,27 @@ export function usePrompts(props: {
     if (type === 'detail') {
       resTable = props.detailValue;
     }
+    if (columnIndex) {
+      return `\n\n${extractTableColumns(resTable, columnIndex)}`;
+    }
     return `\n\n${resTable}`;
   };
   const generatePrompt = (
-    prompt: Array<{ prompt: string; tableType: string }> | string,
+    prompt: Array<{ prompt: string; tableType: string; columnIndex?: number[] }> | string,
     endPrompt?: string
   ) => {
     if (isArray(prompt)) {
       return prompt.map(
-        (ele) => `${ele.prompt}${variablePrompt.value}${getTablePrompt(ele.tableType)}`
+        (ele) =>
+          `${ele.prompt}${variablePrompt.value}${getTablePrompt(ele.tableType, ele.columnIndex)}`
       );
     } else {
       return [`${prompt}${variablePrompt.value}${endPrompt ? '\n\n' + endPrompt : ''}`];
     }
   };
+
+  const fullTablePrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${props.searchValue}\n详情字段表格：\n${props.detailValue}\n`;
+  const tableAndSearchTablePrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${extractTableColumns(props.searchValue, [0, 1])}\n`;
   const steps = [
     {
       key: 'step1',
@@ -66,7 +72,6 @@ export function usePrompts(props: {
       fileName: () => `${props.moduleName}Type.ts`,
       filePath: () => `/types`,
       basePrompt: typePrompt,
-      importPhase: () => importPhases.typeImports,
       promptGenerator: () => {
         if (!props.tableValue) {
           alert('请填写列表字段表格信息');
@@ -76,7 +81,8 @@ export function usePrompts(props: {
           alert('请填写检索字段表格信息');
           return '';
         }
-        return generatePrompt(typePrompt);
+        const emdPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${extractTableColumns(props.searchValue, [0, 3])}\n`;
+        return generatePrompt(typePrompt, emdPrompt);
       }
     },
     {
@@ -93,28 +99,6 @@ export function usePrompts(props: {
         return generatePrompt(entityPrompts);
       }
     },
-    // {
-    //   key: 'step3',
-    //   title: '生成enum',
-    //   fileName: () => `enum.ts`,
-    //   filePath: () => `/domains/${deInitial(props.moduleName)}Domain`,
-    //   basePrompt: enumPrompts,
-    //   promptGenerator: () => {
-    //     if (!props.tableValue) {
-    //       alert('请填写列表字段表格信息');
-    //       return '';
-    //     }
-    //     if (!props.searchValue) {
-    //       alert('请填写检索字段表格信息');
-    //       return '';
-    //     }
-    //     if (!props.detailValue) {
-    //       alert('请填写详情字段表格信息');
-    //       return '';
-    //     }
-    //     return generatePrompt(enumPrompts);
-    //   }
-    // },
     {
       key: 'step3',
       title: '生成enum',
@@ -134,8 +118,7 @@ export function usePrompts(props: {
           alert('请填写详情字段表格信息');
           return '';
         }
-        const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${props.searchValue}\n详情字段表格：\n${props.detailValue}\n`;
-        return generatePrompt(enumPrompt, endPrompt);
+        return generatePrompt(enumPrompt, fullTablePrompt);
       }
     },
     {
@@ -269,8 +252,7 @@ export function usePrompts(props: {
       filePath: () => `/views/${deInitial(props.moduleName)}`,
       basePrompt: previewPrompts,
       promptGenerator: () => {
-        const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${extractTableColumns(props.searchValue)}\n`;
-        return generatePrompt(previewPrompts, endPrompt);
+        return generatePrompt(previewPrompts, tableAndSearchTablePrompt);
       }
     },
     {
@@ -280,8 +262,7 @@ export function usePrompts(props: {
       filePath: () => `/views/${deInitial(props.moduleName)}`,
       basePrompt: editPrompts,
       promptGenerator: () => {
-        const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${extractTableColumns(props.searchValue)}\n`;
-        return generatePrompt(editPrompts, endPrompt);
+        return generatePrompt(editPrompts, tableAndSearchTablePrompt);
       }
     },
     {
@@ -291,8 +272,7 @@ export function usePrompts(props: {
       filePath: () => `/views/${deInitial(props.moduleName)}`,
       basePrompt: recyclePrompts,
       promptGenerator: () => {
-        const endPrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${extractTableColumns(props.searchValue)}\n`;
-        return generatePrompt(recyclePrompts, endPrompt);
+        return generatePrompt(recyclePrompts, tableAndSearchTablePrompt);
       }
     },
     {

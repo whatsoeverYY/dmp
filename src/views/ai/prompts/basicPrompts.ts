@@ -1,6 +1,7 @@
 export const basicPrompts = {
   startPhase:
-    '根据下面表格、模版代码、变量生成一段ts代码，所有显示声明的ts类型都需要保留，模板代码中的常量内容不做任何变更，要求如下：\n',
+    '根据下面表格、模版代码、变量生成一段ts代码，所有显示声明的ts类型都需要保留，模板代码中的常量内容不做任何变更，' +
+    'PATSNAP为项目专有名词，具体要求如下：\n',
   startPhaseWithoutTable:
     '根据下面模版代码、变量生成一段ts代码，所有显示声明的ts类型都需要保留，要求如下：\n',
   importPhaseRule: '保留模板中的import语句。\n',

@@ -4,7 +4,7 @@ const tablePrompt =
   basicPrompts.startPhase +
   'columnConfig对象中的key为下表中的[E_{转大写下划线(name)}_LIST_COLUMNS.{转大写(列表字段)}]，每个key对应的值为一个对象。' +
   '此对象有一个必选属性field，值为[li][转首字母大写驼峰(列表字段)]。\n' +
-  '备注列的值为KEY的字段，field值为dyDbId；列表字段值以_id_view结尾的字段不在columnConfig中添加，其余遵循上述规则。\n' +
+  '列表的第一个id的字段，field值为dyDbId；列表字段值以_id_view结尾的字段不在columnConfig中添加，其余遵循上述规则。\n' +
   basicPrompts.templateCode +
   "import { GTableColumn } from '@/components/business/Table/type';\n" +
   "import { useTableListProcessUnit } from '@/compositions/lowcodeConfig/useTableListProcessUnit';\n" +
@@ -32,4 +32,4 @@ const tablePrompt =
   basicPrompts.importPhaseRule +
   basicPrompts.endPhase;
 
-export const listColumnsPrompts = [{ prompt: tablePrompt, tableType: 'table' }];
+export const listColumnsPrompts = [{ prompt: tablePrompt, tableType: 'table', columnIndex: [0] }];

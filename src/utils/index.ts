@@ -18,7 +18,7 @@ export const matchCode = (str: string): string => {
   return str;
 };
 
-export const extractTableColumns = (mdTable: string) => {
+export const extractTableColumns = (mdTable: string, columnsIndex: number[]) => {
   // 切分表格内容为行
   const rows = mdTable.trim().split('\n');
 
@@ -29,7 +29,8 @@ export const extractTableColumns = (mdTable: string) => {
     // 过滤掉空格和首尾空列
     const filteredColumns = columns.map((col) => col.trim()).filter((col) => col !== '');
     // 取前两列数据
-    return `| ${filteredColumns[0]} | ${filteredColumns[1]} |`;
+    // return `| ${filteredColumns[0]} | ${filteredColumns[1]} |`;
+    return `| ${columnsIndex.map((column) => filteredColumns[column]).join(' | ')} |`;
   });
 
   // 返回Markdown格式的前两列数据

@@ -45,7 +45,7 @@ const searchFormParamsPrompt =
   basicPrompts.noImports +
   basicPrompts.endPhase;
 
-export const typePrompt = [
+export const typePrompts = [
   { prompt: dtoPrompt, tableType: 'table' },
   { prompt: searchFormParamsPrompt, tableType: 'search' },
   { prompt: searchParamsPrompt, tableType: 'search' }
