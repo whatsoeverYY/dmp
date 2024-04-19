@@ -97,4 +97,6 @@ const searchPrompt =
   basicPrompts.importPhaseRule +
   basicPrompts.endPhase;
 
-export const searchFormPrompts = [{ prompt: searchPrompt, tableType: 'search' }];
+export const searchFormPrompts = [
+  { prompt: searchPrompt, tableType: 'search', columnIndex: [0, 1, 4, 5, 6, 7] }
+];

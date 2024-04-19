@@ -23,8 +23,6 @@ export const editPrompts =
   "import { DATA_STATUS } from '@/types/DrugTypes';\n" +
   "import { Base{name}ListPage } from '@/views/{首字母小写(name)}/Base{name}ListPage';\n" +
   "import { defineComponent } from 'vue';\n" +
-  "import { useRoute, useRouter } from 'vue-router';\n" +
-  "import cn from '../locales/cn';\n" +
   '\n' +
   'export default defineComponent({\n' +
   "name: '{name}EditList',\n" +
