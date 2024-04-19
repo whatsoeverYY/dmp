@@ -33,26 +33,26 @@
         :disabled="!moduleName"
         type="primary"
         :loading="loading"
-        @click="() => generate(items[current].promptGenerator, items[current].importPhase)"
+        @click="() => generate(items[current].promptGenerator)"
         >开始生成</Button
       >
       <Button
-        :disabled="!returnResult[String(current)]"
+        :disabled="!resultRecord[String(current)]"
         class="generate-content-button"
         type="primary"
         @click="() => downloadFile(current, items[current].fileName?.())"
         >下载文件</Button
       >
       <Button
-        :disabled="!returnResult[String(current)]"
+        :disabled="!resultRecord[String(current)]"
         class="generate-content-button"
         type="primary"
         @click="() => writeFile(current, items[current].fileName?.(), items[current].filePath?.())"
         >写入系统</Button
       >
     </div>
-    <div class="result" v-if="returnResult[String(current)]">
-      <highlightjs language="typescript" :code="returnResult[String(current)]" />
+    <div class="result" v-if="resultRecord[String(current)]">
+      <highlightjs language="typescript" :code="resultRecord[String(current)]" />
     </div>
     <Modal
       wrapClassName="prompt-modal"
@@ -60,7 +60,9 @@
       title="查看完整prompt"
       @ok="modalVisible = false"
     >
-      <p class="prompt-modal-info">{{ items[current].promptGenerator?.().join('\n\n') }}</p>
+      <p class="prompt-modal-info">
+        {{ (items[current].promptGenerator?.() || ['']).join('\n\n') }}
+      </p>
     </Modal>
   </div>
 </template>
@@ -69,7 +71,6 @@ import { fetchGPTResult } from '@/utils/fetchLLM';
 import { writeFileIO } from '@/utils/fs';
 import { usePrompts } from '@/views/ai/prompts/usePrompts';
 import { Steps, Button, Space, Modal, message } from 'ant-design-vue';
-import { isArray } from 'ant-design-vue/es/_util/util';
 import { ref, computed } from 'vue';
 const props = defineProps<{
   moduleName: string;
@@ -81,10 +82,11 @@ const props = defineProps<{
   authorization: string;
   engine: string;
   rootPath: string;
+  resultRecord: Record<string, string>;
 }>();
+const emit = defineEmits(['update:resultRecord']);
 const current = ref<number>(0);
 const modalVisible = ref(false);
-const returnResult = ref<Record<string, string>>({});
 const loading = ref(false);
 const { steps: items } = usePrompts(props);
 const openPromptModal = (gebPrompt?: () => string[] | '') => {
@@ -94,44 +96,36 @@ const openPromptModal = (gebPrompt?: () => string[] | '') => {
   }
   modalVisible.value = true;
 };
-const generate = (genPrompt?: () => string[] | '', genImportPhase?: () => string) => {
+const generate = (genPrompt?: () => string[] | '') => {
   const prompt = genPrompt?.();
-  const importPhase = genImportPhase?.();
   if (!prompt) {
     return false;
   }
   loading.value = true;
-  returnResult.value = {
-    ...returnResult.value,
+  emit('update:resultRecord', {
+    ...props.resultRecord,
     [String(current.value)]: ''
-  };
-  if (isArray(prompt)) {
-    const promiseArr = prompt.map((ele) =>
-      fetchGPTResult(props.authorization, props.engine, { message: ele, model: props.modelValue })
-    );
-    Promise.all(promiseArr).then((resArr) => {
-      returnResult.value = {
-        ...returnResult.value,
-        [String(current.value)]: `${importPhase ? importPhase + '\n\n' : ''}${resArr.join('\n\n')}`
-      };
+  });
+  const promiseArr = prompt.map((ele) =>
+    fetchGPTResult(props.authorization, props.engine, { message: ele, model: props.modelValue })
+  );
+  Promise.all(promiseArr).then(
+    (resArr) => {
+      emit('update:resultRecord', {
+        ...props.resultRecord,
+        [String(current.value)]: `${resArr.map((ele) => ele.code).join('\n\n')}`
+      });
       loading.value = false;
-    });
-  } else {
-    fetchGPTResult(props.authorization, props.engine, {
-      message: prompt,
-      model: props.modelValue
-    }).then((res: string) => {
-      returnResult.value = {
-        ...returnResult.value,
-        [String(current.value)]: res
-      };
+    },
+    (err) => {
+      alert(`请求失败: ${err}`);
       loading.value = false;
-    });
-  }
+    }
+  );
 };
 
 const downloadFile = (current: number, filename: string) => {
-  const text = returnResult.value[String(current)];
+  const text = props.resultRecord[String(current)];
   const blob = new Blob([text], { type: 'text/plain' });
   const href = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -144,7 +138,7 @@ const downloadFile = (current: number, filename: string) => {
 };
 
 const writeFile = (current: number, filename: string, filepath: string) => {
-  const text = returnResult.value[String(current)];
+  const text = props.resultRecord[String(current)];
   writeFileIO(text, `${props.rootPath}${filepath}`, filename).then(() => {
     message.success('写入成功');
   });

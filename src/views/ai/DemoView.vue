@@ -72,6 +72,7 @@
         :authorization="authorization"
         :engine="engine"
         :root-path="rootPath"
+        v-model:resultRecord="resultRecord"
       />
     </div>
     <Modal
@@ -131,6 +132,7 @@ const searchValue = ref(localStorage.getItem('searchValue') || '');
 const detailValue = ref(localStorage.getItem('detailValue') || '');
 const modelValue = ref(localStorage.getItem('modelValue') || undefined);
 const authorization = ref(localStorage.getItem('authorization') || '');
+const resultRecord = ref<Record<string, string>>({});
 const engine = computed((): string => {
   if (modelValue.value?.includes('claude')) {
     return 'anthropic';
@@ -193,7 +195,7 @@ const handleChangeModel = (value: string) => {
   modelValue.value = value;
   localStorage.setItem('modelValue', value);
 };
-const allWithProgress = (requests: Promise<string[]>[], callback: () => void) => {
+const allWithProgress = (requests: Promise<any[]>[], callback: () => void) => {
   requests.forEach((item) => {
     item.then(() => {
       callback();
@@ -227,20 +229,30 @@ const generateAll = () => {
   });
   allWithProgress(allStep, () => {
     progress.value += step;
-  }).then((resArr) => {
-    const allRes = resArr.map((ele, index) => {
-      const importPhase = steps[index].importPhase?.() || '';
-      const text = `${importPhase ? importPhase + '\n\n' : ''}${ele.join('\n\n')}`;
-      const filepath = `${rootPath.value}${steps[index].filePath()}`;
-      const filename = steps[index].fileName();
-      return writeFileIO(text, `${filepath}`, filename);
-    });
-    Promise.all(allRes).then(() => {
-      message.success('生成成功');
-      progress.value = 100;
+  }).then(
+    (resArr) => {
+      const allRes = resArr.map((res, index) => {
+        const text = `${res.map((ele) => ele.code).join('\n\n')}`;
+        const messages = `${res.map((ele) => ele.message).join('\n\n')}`;
+        resultRecord.value = {
+          ...resultRecord.value,
+          [`${index}`]: messages
+        };
+        const filepath = `${rootPath.value}${steps[index].filePath()}`;
+        const filename = steps[index].fileName();
+        return writeFileIO(text, `${filepath}`, filename);
+      });
+      Promise.all(allRes).then(() => {
+        message.success('生成成功');
+        progress.value = 100;
+        loading.value = false;
+      });
+    },
+    (err) => {
+      alert(`请求失败: ${err}`);
       loading.value = false;
-    });
-  });
+    }
+  );
 };
 
 const writeBasic = () => {
@@ -295,7 +307,7 @@ const writeBasic = () => {
     })
   ];
   Promise.all(promiseArr).then(() => {
-    message.success('写入成功');
+    message.success('基本信息写入成功');
   });
 };
 </script>

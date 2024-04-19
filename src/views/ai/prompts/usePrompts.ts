@@ -52,7 +52,7 @@ export function usePrompts(props: {
   const generatePrompt = (
     prompt: Array<{ prompt: string; tableType: string; columnIndex?: number[] }> | string,
     endPrompt?: string
-  ) => {
+  ): string[] => {
     if (isArray(prompt)) {
       return prompt.map(
         (ele) =>

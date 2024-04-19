@@ -4,7 +4,7 @@ export const fetchGPTResult = async (
   authorization: string,
   engine: string,
   param: { message: string; model?: string; temperature?: number }
-): Promise<string> => {
+): Promise<{ code?: string; message?: string }> => {
   return new Promise((resolve, reject) => {
     const bodyParams = {
       temperature: 0.2,
@@ -22,8 +22,12 @@ export const fetchGPTResult = async (
     })
       .then((response) => response.json())
       .then((data) => {
-        const codeRes = matchCode(data.data?.message);
-        resolve(codeRes);
+        const message = data.data?.message;
+        const code = matchCode(message);
+        resolve({ message, code });
+      })
+      .catch((error) => {
+        reject(error);
       });
   });
 };
