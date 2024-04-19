@@ -59,6 +59,11 @@
           </Tooltip>
           <Progress v-if="progress" :percent="progress" status="active" />
         </Space>
+        <Space v-if="totalUsage.total_tokens">
+          <div>prompt token总计：{{ totalUsage.completion_tokens }}</div>
+          <div>completion token总计：{{ totalUsage.prompt_tokens }}</div>
+          <div>token总计：{{ totalUsage.total_tokens }}</div>
+        </Space>
       </Space>
     </div>
     <div class="steps">
@@ -143,12 +148,13 @@ const token = computed((): number => {
 const loading = ref(false);
 const tableModalVisible = ref(false);
 const progress = ref(0);
+const totalUsage = ref({ completion_tokens: 0, prompt_tokens: 0, total_tokens: 0 });
 const options = [
   { value: 'claude-3-haiku', label: 'claude-3-haiku', engine: 'anthropic' },
   { value: 'claude-3-sonnet', label: 'claude-3-sonnet', engine: 'anthropic' },
   { value: 'claude-3-opus', label: 'claude-3-opus', engine: 'anthropic' },
   { value: 'gemini-1.5-pro-preview-0409', label: 'gemini-1.5-pro-preview-0409', engine: 'google' },
-  { value: 'gpt-3.5-turbo', label: 'gpt-3.5-turbo', engine: 'azure' },
+  { value: 'gpt-3.5-turbo', label: 'gpt-3.5-turbo', engine: 'azure', token: 4096 },
   { value: 'gpt-3.5-turbo-16k', label: 'gpt-3.5-turbo-16k', engine: 'azure' },
   { value: 'gpt-4', label: 'gpt-4', engine: 'azure' },
   { value: 'gpt-4-turbo', label: 'gpt-4-turbo', engine: 'openai' }
@@ -217,6 +223,26 @@ const generateAll = () => {
   }
   loading.value = true;
   progress.value = start - 1;
+  const addUpUsage = (
+    usageCur: {
+      completion_tokens: number;
+      prompt_tokens: number;
+      total_tokens: number;
+    },
+    usageNew: {
+      completion_tokens: number;
+      prompt_tokens: number;
+      total_tokens: number;
+    }[]
+  ) => {
+    return {
+      completion_tokens:
+        usageCur.completion_tokens + usageNew.reduce((acc, cur) => acc + cur.completion_tokens, 0),
+      prompt_tokens:
+        usageCur.prompt_tokens + usageNew.reduce((acc, cur) => acc + cur.prompt_tokens, 0),
+      total_tokens: usageCur.total_tokens + usageNew.reduce((acc, cur) => acc + cur.total_tokens, 0)
+    };
+  };
   const allStep = steps.map((ele) => {
     const prompts = ele?.promptGenerator?.() as string[];
     const promiseArr = prompts.map((ele) =>
@@ -235,6 +261,10 @@ const generateAll = () => {
       const allRes = resArr.map((res, index) => {
         const text = `${res.map((ele) => ele.code).join('\n\n')}`;
         const messages = `${res.map((ele) => ele.message).join('\n\n')}`;
+        totalUsage.value = addUpUsage(
+          totalUsage.value,
+          res.map((ele) => ele.usage)
+        );
         resultRecord.value = {
           ...resultRecord.value,
           [`${index}`]: messages
