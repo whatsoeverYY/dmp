@@ -22,7 +22,7 @@ export const extractTableColumns = (mdTable: string, columnsIndex: number[]) => 
   // 切分表格内容为行
   const rows = mdTable.trim().split('\n');
 
-  // 提取前两列数据
+  // 提取某几列数据
   const data = rows.map((row) => {
     // 通过竖线分割行
     const columns = row.split('|');
@@ -35,4 +35,21 @@ export const extractTableColumns = (mdTable: string, columnsIndex: number[]) => 
 
   // 返回Markdown格式的前两列数据
   return data.join('\n');
+};
+
+export const getRandomValueFromFirstColumn = (mdTable: string) => {
+  // 切分表格内容为行
+  const rows = mdTable.trim().split('\n');
+  // 获取第一列数据
+  const firstColumn = rows.map((row) => {
+    // 通过竖线分割行
+    const columns = row.split('|');
+    // 过滤掉空格和首尾空列
+    const filteredColumns = columns.filter((col) => col !== '').map((col) => col.trim());
+    return filteredColumns[0];
+  });
+  const totalNum = firstColumn.length - 2;
+  // 去0 - totalNum之间的随机整数
+  const randomNum = Math.floor(Math.random() * totalNum);
+  return firstColumn[randomNum + 2];
 };

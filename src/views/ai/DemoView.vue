@@ -64,6 +64,9 @@
           <div>completion token总计：{{ totalUsage.prompt_tokens }}</div>
           <div>token总计：{{ totalUsage.total_tokens }}</div>
         </Space>
+        <div v-if="retryArr.length">
+          错误步骤序号：{{ retryArr.map((ele) => ele + 1).join('、') }}
+        </div>
       </Space>
     </div>
     <div class="steps">
@@ -106,9 +109,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import { camelCaseToUpperCaseUnderscore, deInitial } from '@/utils';
+import { camelCaseToUpperCaseUnderscore, deInitial, getRandomValueFromFirstColumn } from '@/utils';
 import { fetchGPTResult } from '@/utils/fetchLLM';
 import { writeFileIO } from '@/utils/fs';
+import type { ILLMData, IUsage } from '@/utils/types';
 import {
   writeFileDataType,
   writeFileDataTypeEnum,
@@ -139,6 +143,7 @@ const detailValue = ref(localStorage.getItem('detailValue') || '');
 const modelValue = ref(localStorage.getItem('modelValue') || undefined);
 const authorization = ref(localStorage.getItem('authorization') || '');
 const resultRecord = ref<Record<string, string>>({});
+const retryArr = ref<number[]>([]);
 const engine = computed((): string => {
   return options.find((opt) => opt.value === modelValue.value)?.engine || 'azure';
 });
@@ -148,7 +153,7 @@ const token = computed((): number => {
 const loading = ref(false);
 const tableModalVisible = ref(false);
 const progress = ref(0);
-const totalUsage = ref({ completion_tokens: 0, prompt_tokens: 0, total_tokens: 0 });
+const totalUsage = ref<IUsage>({ completion_tokens: 0, prompt_tokens: 0, total_tokens: 0 });
 const options = [
   { value: 'claude-3-haiku', label: 'claude-3-haiku', engine: 'anthropic' },
   { value: 'claude-3-sonnet', label: 'claude-3-sonnet', engine: 'anthropic' },
@@ -223,18 +228,7 @@ const generateAll = () => {
   }
   loading.value = true;
   progress.value = start - 1;
-  const addUpUsage = (
-    usageCur: {
-      completion_tokens: number;
-      prompt_tokens: number;
-      total_tokens: number;
-    },
-    usageNew: {
-      completion_tokens: number;
-      prompt_tokens: number;
-      total_tokens: number;
-    }[]
-  ) => {
+  const addUpUsage = (usageCur: IUsage, usageNew: IUsage[]) => {
     return {
       completion_tokens:
         usageCur.completion_tokens + usageNew.reduce((acc, cur) => acc + cur.completion_tokens, 0),
@@ -243,41 +237,58 @@ const generateAll = () => {
       total_tokens: usageCur.total_tokens + usageNew.reduce((acc, cur) => acc + cur.total_tokens, 0)
     };
   };
-  const allStep = steps.map((ele) => {
-    const prompts = ele?.promptGenerator?.() as string[];
-    const promiseArr = prompts.map((ele) =>
-      fetchGPTResult(authorization.value, engine.value, {
-        message: ele,
-        model: modelValue.value,
-        max_tokens: token.value
-      })
+  /**
+   * 添加重试机制
+   * 重试3次，三次后仍有问题则给出提示
+   */
+  const getStepsFetch = (stepsArr: number[]) => {
+    const allStep = stepsArr.map((index) => {
+      const prompts = steps[index]?.promptGenerator?.() as string[];
+      const promiseArr = prompts.map((ele) =>
+        fetchGPTResult(authorization.value, engine.value, {
+          message: ele,
+          model: modelValue.value,
+          max_tokens: token.value
+        })
+      );
+      return Promise.all(promiseArr);
+    });
+    return allStep;
+  };
+  const allStepsArr = Array.from({ length: steps.length }, (_, index) => index);
+  const allStep = getStepsFetch(allStepsArr);
+  const handleReturn = (res: ILLMData[], index: number, otherFn?: (text: string) => void) => {
+    const text = `${res.map((ele) => ele.code).join('\n\n')}`;
+    const messages = `${res.map((ele) => ele.message).join('\n\n')}`;
+    totalUsage.value = addUpUsage(
+      totalUsage.value,
+      res.map((ele) => ele.usage)
     );
-    return Promise.all(promiseArr);
-  });
+    resultRecord.value = {
+      ...resultRecord.value,
+      [`${index}`]: messages
+    };
+    const filepath = `${rootPath.value}${steps[index].filePath()}`;
+    const filename = steps[index].fileName();
+    otherFn?.(text);
+    return writeFileIO(text, filepath, filename);
+  };
   allWithProgress(allStep, () => {
     progress.value += step;
   }).then(
     (resArr) => {
-      const allRes = resArr.map((res, index) => {
-        const text = `${res.map((ele) => ele.code).join('\n\n')}`;
-        const messages = `${res.map((ele) => ele.message).join('\n\n')}`;
-        totalUsage.value = addUpUsage(
-          totalUsage.value,
-          res.map((ele) => ele.usage)
-        );
-        resultRecord.value = {
-          ...resultRecord.value,
-          [`${index}`]: messages
+      resArr.map((res, index) => {
+        const checkFn = (text: string) => {
+          const afterGenerateCheck = steps[index].afterGenerateCheck;
+          if (afterGenerateCheck && !afterGenerateCheck(text)) {
+            retryArr.value.push(index);
+          }
         };
-        const filepath = `${rootPath.value}${steps[index].filePath()}`;
-        const filename = steps[index].fileName();
-        return writeFileIO(text, `${filepath}`, filename);
+        handleReturn(res, index, checkFn);
       });
-      Promise.all(allRes).then(() => {
-        message.success('生成成功');
-        progress.value = 100;
-        loading.value = false;
-      });
+      message.success('生成成功');
+      progress.value = 100;
+      loading.value = false;
     },
     (err) => {
       alert(`请求失败: ${err}`);

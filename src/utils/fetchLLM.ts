@@ -1,4 +1,5 @@
 import { matchCode } from '@/utils/index';
+import type { IUsage } from '@/utils/types';
 
 export const fetchGPTResult = async (
   authorization: string,
@@ -7,7 +8,7 @@ export const fetchGPTResult = async (
 ): Promise<{
   code?: string;
   message?: string;
-  usage?: { completion_tokens: number; prompt_tokens: number; total_tokens: number };
+  usage?: IUsage;
 }> => {
   return new Promise((resolve, reject) => {
     const bodyParams = {
