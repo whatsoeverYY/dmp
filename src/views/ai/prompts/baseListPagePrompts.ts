@@ -2,7 +2,7 @@ import { basicPrompts } from '@/views/ai/prompts/basicPrompts';
 
 export const baseListPagePrompts =
   basicPrompts.startPhaseWithoutTable +
-  '导出Base{name}ListPage，值为一个component\n' +
+  // '导出Base{name}ListPage，值为一个component\n' +
   '所有的{name}均需要根据给定值进行替换。\n' +
   basicPrompts.templateCode +
   "import { ActionButtonPermGroup } from '@/components/business/Table/ActionButtons';\n" +

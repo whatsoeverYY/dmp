@@ -18,7 +18,9 @@ export const apiPrompt =
   "const pgHttp = addUrlPrefix('{小写中划线(name)}/pg')\n" +
   '\n' +
   '/** 线上列表查询 */\n' +
-  'export const getDynamodb{name}List = async(params: {name}SearchParams): Promise<IHttpWrap<BaseListResponse<{name}Dto>>> => {\n' +
+  'export const getDynamodb{name}List = async(\n' +
+  'params: {name}SearchParams\n' +
+  '): Promise<IHttpWrap<BaseListResponse<{name}Dto>>> => {\n' +
   '  return dyDbHttp({\n' +
   '    baseURL: BASE_URL,\n' +
   "    url: 'search?view=true',\n" +
@@ -28,7 +30,9 @@ export const apiPrompt =
   '}\n' +
   '\n' +
   '/** 线下列表查询 */\n' +
-  'export const getPg{name}List = async(params: {name}SearchParams): Promise<IHttpWrap<BaseListResponse<{name}Dto>>> => {\n' +
+  'export const getPg{name}List = async(\n' +
+  'params: {name}SearchParams\n' +
+  '): Promise<IHttpWrap<BaseListResponse<{name}Dto>>> => {\n' +
   '  return pgHttp({\n' +
   '    baseURL: BASE_URL,\n' +
   "    url: 'search?view=true',\n" +

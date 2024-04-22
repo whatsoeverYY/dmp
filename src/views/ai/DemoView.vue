@@ -289,6 +289,26 @@ const generateAll = () => {
       message.success('生成成功');
       progress.value = 100;
       loading.value = false;
+      // if (retryArr.value.length) {
+      //   message.warning(
+      //     `一键生成成功，存在${retryArr.value.length}个文件内容有误，正在重新生成，请稍后`
+      //   );
+      //   const retryPromises = getStepsFetch(retryArr.value);
+      //   Promise.all(retryPromises).then((retryRes) => {
+      //     retryRes.map((retry, retryIndex) => {
+      //       const retryResult = retry as ILLMData[];
+      //       const stepIndex = retryArr.value[retryIndex];
+      //       handleReturn(retryResult, stepIndex);
+      //     });
+      //     message.success('重试成功');
+      //     progress.value = 100;
+      //     loading.value = false;
+      //   });
+      // } else {
+      //   message.success('生成成功');
+      //   progress.value = 100;
+      //   loading.value = false;
+      // }
     },
     (err) => {
       alert(`请求失败: ${err}`);

@@ -5,7 +5,7 @@ const entityPrompt =
   'class名称为{name}Entity，集成BaseReadableEntity<{name}Dto>，并实现BaseEditableEntity<{name}Dto>。\n' +
   '先对定义静态属性dataTypeEnum，类型为DataTypeEnum，值为DATA_TYPE_ENUM[E_DATA_TYPE.{转大写(name)}]。\n' +
   '再定义constructor，参数为data，类型为{name}Dto，默认值为空对象，并使用ts的as语法认为它的类型为{name}Dto。constructor内调用super方法，传入data参数。\n' +
-  '定义一个取值函数get id()，函数体为return this.data.id;这部分生成，不受下面规则的影响。\n' +
+  '定义一个取值函数get id()，函数体为return this.data.id;这部代码不受下面规则的影响，就按照模版代码内容返回。\n' +
   '再对表格中所有字段按顺序定义取值函数get：\n' +
   '规则1： 每个字段的取值函数名称为 [li+转首字母大写驼峰{列表字段}] ，返回值为this.data.[列表字段(小写下划线格式)]。\n' +
   '规则2：列表的第一个id结尾的字段，在规则1的基础上，增加一个取值函数，名为dyDbId，返回值同规则1。\n' +
