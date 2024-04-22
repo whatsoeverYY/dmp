@@ -33,4 +33,6 @@ const transformPrompt =
   basicPrompts.importPhaseRule +
   basicPrompts.endPhase;
 
-export const transformPrompts = [{ prompt: transformPrompt, tableType: 'search' }];
+export const transformPrompts = [
+  { prompt: transformPrompt, tableType: 'search', columnIndex: [0, 1, 7] }
+];

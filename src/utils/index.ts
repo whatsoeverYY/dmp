@@ -27,7 +27,7 @@ export const extractTableColumns = (mdTable: string, columnsIndex: number[]) => 
     // 通过竖线分割行
     const columns = row.split('|');
     // 过滤掉空格和首尾空列
-    const filteredColumns = columns.map((col) => col.trim()).filter((col) => col !== '');
+    const filteredColumns = columns.filter((col) => col !== '').map((col) => col.trim());
     // 取前两列数据
     // return `| ${filteredColumns[0]} | ${filteredColumns[1]} |`;
     return `| ${columnsIndex.map((column) => filteredColumns[column]).join(' | ')} |`;
