@@ -44,7 +44,7 @@ const searchPrompt =
   "import { E_BASE_SEARCH_PARAMS } from '@/domains/baseDomain/base.enum';\n" +
   "import { E_{大写下划线(name)}_SEARCH_PARAMS } from '@/domains/{首字母小写(name)}Domain/enum';\n" +
   "import { DICTYPENAMES, E_TIME_FORMAT } from '@/type/enum';\n" +
-  "import { {name}SearchFormParams } from '@/types/{name}Type';\n" +
+  "import { {name}SearchFormParams } from '@/types/{首字母大写(name)}Type';\n" +
   "import { MaybeRef } from '@vueuse/core';\n" +
   "import { DatePicker } from 'ant-design-vue';\n" +
   '\n' +

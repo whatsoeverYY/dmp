@@ -16,7 +16,7 @@ export const baseListPropsPrompts =
   "} from '@/domains/{首字母小写(name)}Domain/enum';\n" +
   "import { E_PERMISSION } from '@/type/enum';\n" +
   "import { baseListPageProps } from '@/types/BaseProps';\n" +
-  "import { {name}SearchFormParams } from '@/types/{name}Type';\n" +
+  "import { {name}SearchFormParams } from '@/types/{首字母大写(name)}Type';\n" +
   "import { defineComponentProps } from '@/utils/base';\n" +
   "import { PropType, ExtractPropTypes } from 'vue';\n" +
   '\n' +

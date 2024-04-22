@@ -16,7 +16,7 @@ export const searchActionPrompts =
   "import { {name}Entity } from '@/domains/{首字母小写(name)}Domain/entity';\n" +
   "import { {name}Service } from '@/domains/{首字母小写(name)}Domain/service';\n" +
   "import { E_ROUTER_NAME, E_ROUTER_PARAMS } from '@/type/router';\n" +
-  "import { {name}SearchParams } from '@/types/{name}Type';\n" +
+  "import { {name}SearchParams } from '@/types/{首字母大写(name)}Type';\n" +
   "import { getDecodeQuery } from '@/utils/sourceHelper';\n" +
   "import { Base{name}ListPageProps } from '@/views/{首字母小写(name)}/Base{name}ListPageProps';\n" +
   "import { computed } from 'vue';\n" +

@@ -10,7 +10,7 @@ export const apiPrompt =
   'import {\n' +
   '  {name}SearchParams,\n' +
   '  {name}Dto,\n' +
-  "} from '@/types/{name}Type';\n" +
+  "} from '@/types/{首字母大写(name)}Type';\n" +
   "import { removeEmptyStringAnfEmptyArray } from '@/utils/common';\n" +
   "import { addUrlPrefix } from '@/utils/http';\n" +
   '\n' +

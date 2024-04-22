@@ -13,7 +13,7 @@ const transformPrompt =
   'import {\n' +
   '  {name}SearchFormParams,\n' +
   '  {name}SearchParams,\n' +
-  "} from '@/types/{name}Type';\n" +
+  "} from '@/types/{首字母大写(name)}Type';\n" +
   "import { handleAutoCompleteValue } from '@/utils/drugHelper';\n" +
   "import { getTimeRange } from '@/utils/getTimeRange';\n" +
   '\n' +

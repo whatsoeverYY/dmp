@@ -13,7 +13,7 @@ export const servicePrompt =
   "import { DATA_SOURCE } from '@/constants/enum';\n" +
   "import { BaseDomainService } from '@/domains/baseDomain';\n" +
   "import { {name}Entity } from '@/domains/{首字母小写(name)}Domain/entity';\n" +
-  "import { {name}SearchFormParams } from '@/types/{name}Type';\n" +
+  "import { {name}SearchFormParams } from '@/types/{首字母大写(name)}Type';\n" +
   "import { transformSearchForm2PostData } from './transform';\n" +
   '\n' +
   "import { transformSearchForm2PostData } from './transform';\n" +
