@@ -4,9 +4,11 @@ export const recyclePrompts =
   basicPrompts.startPhase +
   '导出一个component，名称为{name}PreviewList。\n' +
   'component中的setup函数中的内容补全规则如下' +
-  'formItemConfig数组值来自于检索字段表格中的[E_转大写下划线{name}_SEARCH_PARAMS].[大写(检索字段)]，以及4个来自E_BASE_SEARCH_PARAMS的基本字段。\n' +
-  'columns数组值来自于列表字段表格中的[E_转大写下划线{name}_LIST_COLUMNS].[大写(列表字段)]，以及5个来自E_BASE_TABLE_COLUMN的基本字段。\n' +
-  '以_id_view结尾的且字段名称为空的列表字段不需要添加到columns数组中。\n' +
+  'formItemConfig数组值来自于检索字段表格中的[E_转大写下划线{name}_SEARCH_PARAMS].[大写(检索字段)]，' +
+  '以及4个来自E_BASE_SEARCH_PARAMS的基本字段。\n' +
+  'columns数组值来自于列表字段表格中的且不以_id_view结尾[E_转大写下划线{name}_LIST_COLUMNS].[转大写(列表字段)]，' +
+  '以及5个来自E_BASE_TABLE_COLUMN的基本字段。\n' +
+  '模板代码中的E_BASE_SEARCH_PARAMS以及E_BASE_TABLE_COLUMN部分均保留' +
   '常量定义完成，最后return一个组件，名称为Base{name}ListPage。\n' +
   basicPrompts.templateCode +
   "import { DATA_SOURCE } from '@/constants/enum';\n" +

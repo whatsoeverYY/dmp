@@ -4,7 +4,8 @@ const detailPrompt =
   basicPrompts.startPhase +
   '所有的{name}均需要根据给定值进行替换。\n' +
   '在{待补充数据}处根据下面提供的表格完善代码，规则如下:\n' +
-  '数组值来自于下表中的[E_{转大写下划线(name)}_DOC_ITEMS.{转大写(详情字段)}]，以及4个来自E_BASE_DOC_EDIT_FORM的基本字段，只在只读模式下展示' +
+  '数组值来自于下表中的[E_{转大写下划线(name)}_DOC_ITEMS.{转大写(详情字段)}]，以及4个来自E_BASE_DOC_EDIT_FORM的基本字段，只在只读模式下展示。\n' +
+  '代码中的dyDbId和liTitle均保留，不做任何修改' +
   basicPrompts.templateCode +
   "import Process from '@/components/business/BpmnWorkflow/Process';\n" +
   'import {\n' +

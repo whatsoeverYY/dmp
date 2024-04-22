@@ -64,7 +64,7 @@ export function usePrompts(props: {
   };
 
   const fullTablePrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${props.searchValue}\n详情字段表格：\n${props.detailValue}\n`;
-  const tableAndSearchTablePrompt = `列表字段表格：\n${props.tableValue}\n检索字段表格：\n${extractTableColumns(props.searchValue, [0, 1])}\n`;
+  const tableAndSearchTablePrompt = `列表字段表格：\n${extractTableColumns(props.tableValue, [0])}\n检索字段表格：\n${extractTableColumns(props.searchValue, [0])}\n`;
   const steps = [
     {
       key: 'step1',

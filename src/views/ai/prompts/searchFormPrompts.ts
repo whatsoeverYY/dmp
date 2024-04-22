@@ -9,7 +9,8 @@ const searchPrompt =
   '定义一个对象formConfig，类型为Record<\n' +
   '    E_{转大写下划线(name)}_SEARCH_PARAMS,\n' +
   '    {name}SearchFormConfig\n' +
-  '  >。对象的所有key为下表中的[E_{转大写下划线(name)}_SEARCH_PARAMS.{转大写(检索字段)}]，每个key对应的值为一个对象。此对象有一个必选属性field，值为[fe_][检索字段]，如果表中对应备注值为DATE，则field值为[fe_][检索字段][_range]。\n' +
+  '  >。对象的所有key为下表中的[E_{转大写下划线(name)}_SEARCH_PARAMS.{转大写(检索字段)}]，每个key对应的值为一个对象。' +
+  '此对象有一个必选属性field，值为[fe_][检索字段]，如果表中对应RangePicker为RangePicker，则field值为[fe_][检索字段][_range]。\n' +
   '如果表中对应检索方式有值，则对象还有几个可选属性：\n' +
   '一、如果表中对应检索方式值为RangePicker，则添加render属性，属性值为一个函数，具体代码见模板代码。\n' +
   '二、如果表中对应检索方式值为renderXXX，则添加render属性，属性值为renderXXX\n' +
@@ -98,5 +99,5 @@ const searchPrompt =
   basicPrompts.endPhase;
 
 export const searchFormPrompts = [
-  { prompt: searchPrompt, tableType: 'search', columnIndex: [0, 1, 4, 5, 6, 7] }
+  { prompt: searchPrompt, tableType: 'search', columnIndex: [0, 1, 4, 5, 6] }
 ];
