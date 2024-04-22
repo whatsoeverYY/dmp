@@ -3,7 +3,8 @@ import { basicPrompts } from '@/views/ai/prompts/basicPrompts';
 export const typePrompt =
   basicPrompts.startPhase +
   '导出三个接口，分别为：\n' +
-  '1. 接口{name}Dto，这个接口继承IBaseEntityInfoV2，接口中的字段名为列表字段表格中的列表字段，类型为列表字段表格中中的数据类型值，每个字段均是可选字段。\n' +
+  '1. 接口{name}Dto，这个接口继承IBaseEntityInfoV2，接口中的第一个字段为id，可选，类型为string，' +
+  '其余字段名为列表字段表格中的列表字段，类型为列表字段表格中中的数据类型值，每个字段均是可选字段。\n' +
   '2. 接口{name}SearchParams，这个接口继承BaseSearchParamsV2，接口中的字段名为检索字段表格中的检索字段，类型为检索字段表格中的检索类型值。\n' +
   '如果某字段的备注值为DATE，则生成两个字段，字段名为[检索字段][_from]以及[检索字段][_to]，类型均为string | number。\n' +
   '每个字段均是可选字段。\n' +
@@ -22,8 +23,9 @@ export const typePrompt =
   '  BaseSearchFormParams,\n' +
   "} from '@/types/BaseTypes';" +
   'export interface {name}Dto extends IBaseEntityInfoV2 {\n' +
+  '    id?: string;\n' +
   '    /** *字段名称* */\n' +
-  '    xxx?: string;*\n' +
+  '    xxx?: string;\n' +
   '    /** *字段名称* */\n' +
   '    xxx_id?: string[];\n' +
   '    xxx_id_view?: BaseNameInfo[];\n' +

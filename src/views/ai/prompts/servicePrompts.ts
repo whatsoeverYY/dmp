@@ -35,7 +35,7 @@ export const servicePrompt =
   '  override,\n' +
   '  transformSearchForm2PostData\n' +
   ');\n' +
-  'const rt = await getDynamodb{name}List(postParams);\n' +
+  'const rt = await fetchList(postParams);\n' +
   '\n' +
   'return this.generateItemList(rt, (i) => new {name}Entity(i));\n' +
   '}\n' +
