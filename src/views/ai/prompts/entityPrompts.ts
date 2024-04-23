@@ -19,8 +19,8 @@ const entityPrompt =
   "import { {name}eDto } from '@/types/{首字母大写(name)}Type';\n" +
   "import { DataTypeEnum, DATA_TYPE_ENUM } from '@/utils/dataType';\n" +
   '\n' +
-  'export class XXXEntity extends BaseReadableEntity<XXXDto> implements BaseEditableEntity<XXXDto> {\n' +
-  'static dataTypeEnum: DataTypeEnum = DATA_TYPE_ENUM[E_DATA_TYPE.XXX];\n' +
+  'export class {name}Entity extends BaseReadableEntity<{name}Dto> implements BaseEditableEntity<XXXDto> {\n' +
+  'static dataTypeEnum: DataTypeEnum = DATA_TYPE_ENUM[E_DATA_TYPE.{转大写(name)}];\n' +
   '\n' +
   '  constructor(data: {name}Dto = {}) {\n' +
   '    super(data as {name}Dto);\n' +

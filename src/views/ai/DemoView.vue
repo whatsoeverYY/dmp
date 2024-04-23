@@ -60,8 +60,8 @@
           <Progress v-if="progress" :percent="progress" status="active" />
         </Space>
         <Space v-if="totalUsage.total_tokens">
-          <div>prompt token总计：{{ totalUsage.completion_tokens }}</div>
-          <div>completion token总计：{{ totalUsage.prompt_tokens }}</div>
+          <div>prompt token总计：{{ totalUsage.prompt_tokens }}</div>
+          <div>completion token总计：{{ totalUsage.completion_tokens }}</div>
           <div>token总计：{{ totalUsage.total_tokens }}</div>
         </Space>
         <div v-if="retryArr.length">

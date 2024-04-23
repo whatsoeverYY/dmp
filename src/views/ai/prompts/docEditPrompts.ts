@@ -6,7 +6,7 @@ const detailPrompt =
   '    E_{转下划线大写(name)}_DOC_ITEMS | E_BASE_DOC_EDIT_FORM\n' +
   '  >[]。\n' +
   '定义readableConfig和editableConfig两个常量，其值分别为调用renderReadableField和renderEditableField函数的结果。\n' +
-  '定义docEditConfig常量，类型为PartialRecord<\n' +
+  '定义docEditConfig常量，类型为Record<\n' +
   '    E_{转下划线大写(name)}_DOC_ITEM,\n' +
   '    IFormConfigItem<{name}Entity>\n' +
   '  >，值为一个对象，对象的key为下表中的[E_{转大写下划线(name)}_DOC_ITEM.{转大写(详情字段)}]，每个key对应的值为一个对象。此对象的生成遵循以下几个规则：\n' +
