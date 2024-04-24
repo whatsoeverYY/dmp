@@ -157,6 +157,7 @@ const writeFile = (current: number, filename: string, filepath: string) => {
   gap: 32px;
 }
 .generate-steps {
+  height: 100%;
   width: 15%;
 }
 .generate-content {

@@ -35,6 +35,7 @@
             @change="changeDetailValue"
           />
           <Button type="primary" @click="tableModalVisible = true">查看表格详情</Button>
+          <a href="./template.xlsx">表格模板下载</a>
         </Space>
         <Space size="large">
           <Select
