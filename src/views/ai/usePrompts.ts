@@ -21,6 +21,7 @@ import { servicePrompt } from '@/views/ai/prompts/servicePrompts';
 import { transformPrompts } from '@/views/ai/prompts/transformPrompts';
 import { enumPrompt } from '@/views/ai/prompts/updated/enumPrompt';
 import { typePrompt } from '@/views/ai/prompts/updated/typePrompt';
+import { useValidation } from '@/views/ai/validation/useValidation';
 import { isArray } from 'ant-design-vue/es/_util/util';
 import { computed } from 'vue';
 
@@ -32,6 +33,18 @@ export function usePrompts(props: {
   moduleNameCn: string;
 }) {
   const variablePrompt = computed(() => `name=${props.moduleName}`);
+  const {
+    typeAfterGenerateCheck,
+    entityAfterGenerateCheck,
+    enumAfterGenerateCheck,
+    transformAfterGenerateCheck,
+    i18nAfterGenerateCheck,
+    searchFormAfterGenerateCheck,
+    listColumnAfterGenerateCheck,
+    listPageAfterGenerateCheck,
+    docEditAfterGenerateCheck,
+    editPageAfterGenerateCheck
+  } = useValidation(props);
 
   const getTablePrompt = (type: string, columnIndex?: number[]) => {
     let resTable = '';
@@ -83,7 +96,8 @@ export function usePrompts(props: {
         }
         const emdPrompt = `列表字段表格：\n${extractTableColumns(props.tableValue, [0, 1, 2])}\n检索字段表格：\n${extractTableColumns(props.searchValue, [0, 1, 2, 3, 7])}\n`;
         return generatePrompt(typePrompt, emdPrompt);
-      }
+      },
+      afterGenerateCheck: typeAfterGenerateCheck
     },
     {
       key: 'step2',
@@ -97,7 +111,8 @@ export function usePrompts(props: {
           return '';
         }
         return generatePrompt(entityPrompts);
-      }
+      },
+      afterGenerateCheck: entityAfterGenerateCheck
     },
     {
       key: 'step3',
@@ -119,7 +134,8 @@ export function usePrompts(props: {
           return '';
         }
         return generatePrompt(enumPrompt, fullTablePrompt);
-      }
+      },
+      afterGenerateCheck: enumAfterGenerateCheck
     },
     {
       key: 'step4',
@@ -133,7 +149,8 @@ export function usePrompts(props: {
           return '';
         }
         return generatePrompt(transformPrompts);
-      }
+      },
+      afterGenerateCheck: transformAfterGenerateCheck
     },
     {
       key: 'step5',
@@ -175,7 +192,8 @@ export function usePrompts(props: {
           return '';
         }
         return generatePrompt(localePrompts);
-      }
+      },
+      afterGenerateCheck: i18nAfterGenerateCheck
     },
     {
       key: 'step8',
@@ -189,7 +207,8 @@ export function usePrompts(props: {
           return '';
         }
         return generatePrompt(searchFormPrompts);
-      }
+      },
+      afterGenerateCheck: searchFormAfterGenerateCheck
     },
     {
       key: 'step9',
@@ -203,7 +222,8 @@ export function usePrompts(props: {
           return '';
         }
         return generatePrompt(listColumnsPrompts);
-      }
+      },
+      afterGenerateCheck: listColumnAfterGenerateCheck
     },
     {
       key: 'step10',
@@ -253,6 +273,9 @@ export function usePrompts(props: {
       basePrompt: previewPrompts,
       promptGenerator: () => {
         return generatePrompt(previewPrompts, tableAndSearchTablePrompt);
+      },
+      afterGenerateCheck: (data: string) => {
+        return listPageAfterGenerateCheck(data);
       }
     },
     {
@@ -263,6 +286,9 @@ export function usePrompts(props: {
       basePrompt: editPrompts,
       promptGenerator: () => {
         return generatePrompt(editPrompts, tableAndSearchTablePrompt);
+      },
+      afterGenerateCheck: (data: string) => {
+        return listPageAfterGenerateCheck(data);
       }
     },
     {
@@ -273,6 +299,9 @@ export function usePrompts(props: {
       basePrompt: recyclePrompts,
       promptGenerator: () => {
         return generatePrompt(recyclePrompts, tableAndSearchTablePrompt);
+      },
+      afterGenerateCheck: (data: string) => {
+        return listPageAfterGenerateCheck(data);
       }
     },
     {
@@ -307,7 +336,8 @@ export function usePrompts(props: {
           return '';
         }
         return generatePrompt(docEditPrompts);
-      }
+      },
+      afterGenerateCheck: docEditAfterGenerateCheck
     },
     {
       key: 'step20',
@@ -331,7 +361,8 @@ export function usePrompts(props: {
           return '';
         }
         return generatePrompt(editPagePrompts);
-      }
+      },
+      afterGenerateCheck: editPageAfterGenerateCheck
     },
     {
       key: 'step22',

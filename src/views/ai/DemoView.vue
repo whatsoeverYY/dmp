@@ -64,10 +64,13 @@
           <div>prompt token总计：{{ totalUsage.prompt_tokens }}</div>
           <div>completion token总计：{{ totalUsage.completion_tokens }}</div>
           <div>token总计：{{ totalUsage.total_tokens }}</div>
+          <div>
+            统计：{{
+              `${totalUsage.total_tokens}( ${totalUsage.prompt_tokens}+${totalUsage.completion_tokens} )`
+            }}
+          </div>
         </Space>
-        <div v-if="retryArr.length">
-          错误步骤序号：{{ retryArr.map((ele) => ele + 1).join('、') }}
-        </div>
+        <div v-if="retryArr.length">错误序号：{{ retryArr.map((ele) => ele + 1).join('、') }}</div>
       </Space>
     </div>
     <div class="steps">
@@ -110,7 +113,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { camelCaseToUpperCaseUnderscore, deInitial, getRandomValueFromFirstColumn } from '@/utils';
+import { camelCaseToUpperCaseUnderscore, deInitial } from '@/utils';
 import { fetchGPTResult } from '@/utils/fetchLLM';
 import { writeFileIO } from '@/utils/fs';
 import type { ILLMData, IUsage } from '@/utils/types';
@@ -122,7 +125,7 @@ import {
   writeFileCn
 } from '@/views/ai/basic/writeBasic';
 import GenerateSteps from '@/views/ai/GenerateSteps.vue';
-import { usePrompts } from '@/views/ai/prompts/usePrompts';
+import { usePrompts } from '@/views/ai/usePrompts';
 import { ref, computed } from 'vue';
 import {
   Textarea,
@@ -143,7 +146,7 @@ const searchValue = ref(localStorage.getItem('searchValue') || '');
 const detailValue = ref(localStorage.getItem('detailValue') || '');
 const modelValue = ref(localStorage.getItem('modelValue') || undefined);
 const authorization = ref(localStorage.getItem('authorization') || '');
-const resultRecord = ref<Record<string, string>>({});
+const resultRecord = ref<Record<string, { messages: string; errorMessage?: string }>>({});
 const retryArr = ref<number[]>([]);
 const engine = computed((): string => {
   return options.find((opt) => opt.value === modelValue.value)?.engine || 'azure';
@@ -212,6 +215,19 @@ const allWithProgress = (requests: Promise<any[]>[], callback: () => void) => {
   });
   return Promise.all(requests);
 };
+const getStepsFetch = (stepsArr: number[]) => {
+  return stepsArr.map((index) => {
+    const prompts = steps[index]?.promptGenerator?.() as string[];
+    const promiseArr = prompts.map((ele) =>
+      fetchGPTResult(authorization.value, engine.value, {
+        message: ele,
+        model: modelValue.value,
+        max_tokens: token.value
+      })
+    );
+    return Promise.all(promiseArr);
+  });
+};
 const generateAll = () => {
   const step = Math.floor(100 / steps.length);
   const start = 100 - step * steps.length;
@@ -238,40 +254,23 @@ const generateAll = () => {
       total_tokens: usageCur.total_tokens + usageNew.reduce((acc, cur) => acc + cur.total_tokens, 0)
     };
   };
-  /**
-   * 添加重试机制
-   * 重试3次，三次后仍有问题则给出提示
-   */
-  const getStepsFetch = (stepsArr: number[]) => {
-    const allStep = stepsArr.map((index) => {
-      const prompts = steps[index]?.promptGenerator?.() as string[];
-      const promiseArr = prompts.map((ele) =>
-        fetchGPTResult(authorization.value, engine.value, {
-          message: ele,
-          model: modelValue.value,
-          max_tokens: token.value
-        })
-      );
-      return Promise.all(promiseArr);
-    });
-    return allStep;
-  };
+
   const allStepsArr = Array.from({ length: steps.length }, (_, index) => index);
   const allStep = getStepsFetch(allStepsArr);
-  const handleReturn = (res: ILLMData[], index: number, otherFn?: (text: string) => void) => {
+  const handleReturn = (res: ILLMData[], index: number, checkFn?: (text: string) => string) => {
     const text = `${res.map((ele) => ele.code).join('\n\n')}`;
     const messages = `${res.map((ele) => ele.message).join('\n\n')}`;
     totalUsage.value = addUpUsage(
       totalUsage.value,
       res.map((ele) => ele.usage)
     );
-    resultRecord.value = {
-      ...resultRecord.value,
-      [`${index}`]: messages
-    };
     const filepath = `${rootPath.value}${steps[index].filePath()}`;
     const filename = steps[index].fileName();
-    otherFn?.(text);
+    const errorMessage = checkFn?.(text) || '';
+    resultRecord.value = {
+      ...resultRecord.value,
+      [`${index}`]: { messages, errorMessage }
+    };
     return writeFileIO(text, filepath, filename);
   };
   allWithProgress(allStep, () => {
@@ -281,35 +280,22 @@ const generateAll = () => {
       resArr.map((res, index) => {
         const checkFn = (text: string) => {
           const afterGenerateCheck = steps[index].afterGenerateCheck;
-          if (afterGenerateCheck && !afterGenerateCheck(text)) {
+          const msg = afterGenerateCheck?.(text);
+          if (msg) {
             retryArr.value.push(index);
+            return msg;
           }
+          return '';
         };
         handleReturn(res, index, checkFn);
       });
-      message.success('生成成功');
+      if (retryArr.value.length) {
+        message.warning(`一键生成成功，存在${retryArr.value.length}个文件内容有误。`);
+      } else {
+        message.success('生成成功');
+      }
       progress.value = 100;
       loading.value = false;
-      // if (retryArr.value.length) {
-      //   message.warning(
-      //     `一键生成成功，存在${retryArr.value.length}个文件内容有误，正在重新生成，请稍后`
-      //   );
-      //   const retryPromises = getStepsFetch(retryArr.value);
-      //   Promise.all(retryPromises).then((retryRes) => {
-      //     retryRes.map((retry, retryIndex) => {
-      //       const retryResult = retry as ILLMData[];
-      //       const stepIndex = retryArr.value[retryIndex];
-      //       handleReturn(retryResult, stepIndex);
-      //     });
-      //     message.success('重试成功');
-      //     progress.value = 100;
-      //     loading.value = false;
-      //   });
-      // } else {
-      //   message.success('生成成功');
-      //   progress.value = 100;
-      //   loading.value = false;
-      // }
     },
     (err) => {
       alert(`请求失败: ${err}`);

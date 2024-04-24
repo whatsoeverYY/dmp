@@ -52,7 +52,14 @@
       >
     </div>
     <div class="result" v-if="resultRecord[String(current)]">
-      <highlightjs language="typescript" :code="resultRecord[String(current)]" />
+      <div v-if="resultRecord[String(current)]?.errorMessage">
+        {{ resultRecord[String(current)]?.errorMessage }}
+      </div>
+      <highlightjs
+        v-if="resultRecord[String(current)]?.messages"
+        language="typescript"
+        :code="resultRecord[String(current)]?.messages"
+      />
     </div>
     <Modal
       wrapClassName="prompt-modal"
@@ -69,7 +76,7 @@
 <script setup lang="ts">
 import { fetchGPTResult } from '@/utils/fetchLLM';
 import { writeFileIO } from '@/utils/fs';
-import { usePrompts } from '@/views/ai/prompts/usePrompts';
+import { usePrompts } from '@/views/ai/usePrompts';
 import { Steps, Button, Space, Modal, message } from 'ant-design-vue';
 import { ref, computed } from 'vue';
 const props = defineProps<{
@@ -83,7 +90,7 @@ const props = defineProps<{
   engine: string;
   token: number;
   rootPath: string;
-  resultRecord: Record<string, string>;
+  resultRecord: Record<string, { messages: string; errorMessage?: string }>;
 }>();
 const emit = defineEmits(['update:resultRecord']);
 const current = ref<number>(0);
@@ -105,7 +112,7 @@ const generate = (genPrompt?: () => string[] | '') => {
   loading.value = true;
   emit('update:resultRecord', {
     ...props.resultRecord,
-    [String(current.value)]: ''
+    [String(current.value)]: { messages: '' }
   });
   const promiseArr = prompt.map((ele) =>
     fetchGPTResult(props.authorization, props.engine, {
@@ -116,9 +123,11 @@ const generate = (genPrompt?: () => string[] | '') => {
   );
   Promise.all(promiseArr).then(
     (resArr) => {
+      const messages = `${resArr.map((ele) => ele.code).join('\n\n')}`;
+      const checkResult = items[current.value]?.afterGenerateCheck?.(messages);
       emit('update:resultRecord', {
         ...props.resultRecord,
-        [String(current.value)]: `${resArr.map((ele) => ele.code).join('\n\n')}`
+        [String(current.value)]: { messages, errorMessage: checkResult }
       });
       loading.value = false;
     },
@@ -130,7 +139,7 @@ const generate = (genPrompt?: () => string[] | '') => {
 };
 
 const downloadFile = (current: number, filename: string) => {
-  const text = props.resultRecord[String(current)];
+  const text = props.resultRecord[String(current)]?.messages;
   const blob = new Blob([text], { type: 'text/plain' });
   const href = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -143,7 +152,7 @@ const downloadFile = (current: number, filename: string) => {
 };
 
 const writeFile = (current: number, filename: string, filepath: string) => {
-  const text = props.resultRecord[String(current)];
+  const text = props.resultRecord[String(current)]?.messages;
   writeFileIO(text, `${props.rootPath}${filepath}`, filename).then(() => {
     message.success('写入成功');
   });
@@ -165,6 +174,9 @@ const writeFile = (current: number, filename: string, filepath: string) => {
 }
 .result {
   width: 65%;
+  div {
+    color: red;
+  }
 }
 
 .generate-content-info {

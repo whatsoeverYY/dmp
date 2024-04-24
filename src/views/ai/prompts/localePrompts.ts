@@ -9,7 +9,7 @@ const endPrompt =
 
 const listPrompt =
   basicPrompts.startPhase +
-  'columns对象属性为表格中的转为驼峰(列表字段)，属性值为对应字段名称；\n' +
+  'columns对象属性为表格中的不以_id_view结尾的转驼峰(列表字段)，属性值为对应字段名称；\n' +
   '请直接罗列出所有key-value，不需要写单独function。\n' +
   '\n' +
   '下面是模板代码：\n' +

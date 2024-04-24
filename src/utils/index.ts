@@ -1,6 +1,17 @@
 export function camelCaseToUpperCaseUnderscore(str: string) {
   return str.replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase();
 }
+const hyphenateRE = /\B([A-Z])/g;
+const camelizeRE = /[-_](\w)/g;
+/**
+ * 驼峰转下划线
+ */
+export const hyphenate = (str: string) => str?.replace(hyphenateRE, '_$1').toLowerCase();
+/**
+ * 下划线转驼峰
+ */
+export const camelize = (str: string) =>
+  str?.replace(camelizeRE, (_, c) => (c ? c.toUpperCase() : ''));
 
 export const initial = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -52,4 +63,18 @@ export const getRandomValueFromFirstColumn = (mdTable: string) => {
   // 去0 - totalNum之间的随机整数
   const randomNum = Math.floor(Math.random() * totalNum);
   return firstColumn[randomNum + 2];
+};
+
+export const getAllContentFromFirstColumn = (mdTable: string) => {
+  // 切分表格内容为行
+  const rows = mdTable.trim().split('\n');
+  // 获取第一列数据
+  const firstColumn = rows.map((row) => {
+    // 通过竖线分割行
+    const columns = row.split('|');
+    // 过滤掉空格和首尾空列
+    const filteredColumns = columns.filter((col) => col !== '').map((col) => col.trim());
+    return filteredColumns[0];
+  });
+  return firstColumn.slice(2);
 };
