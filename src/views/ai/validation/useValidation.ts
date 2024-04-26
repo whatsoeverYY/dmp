@@ -100,7 +100,7 @@ export function useValidation(props: {
   const entityAfterGenerateCheck = (data: string) => {
     const msg = [
       checkTableFieldsWithoutView(data, false, (str) => `li${initial(camelize(str))}`),
-      checkExtraIdView
+      checkExtraIdView(data)
     ];
     if (!data.includes('get id()')) {
       msg.push('没有生成id的取值函数');
@@ -114,7 +114,7 @@ export function useValidation(props: {
 
   const enumAfterGenerateCheck = (data: string) => {
     return [
-      checkTableFields(data, true),
+      checkTableFieldsWithoutView(data, true),
       checkSearchFields(data, true),
       checkDetailFields(data, true)
     ]
@@ -146,7 +146,7 @@ export function useValidation(props: {
     return [
       checkTableFieldsWithoutView(data, true),
       checkTableFieldsWithoutView(data, false, (str) => `li${initial(camelize(str))}`),
-      checkExtraIdView
+      checkExtraIdView(data)
     ]
       .filter((ele) => !!ele)
       .join(', ');

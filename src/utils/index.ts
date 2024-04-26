@@ -76,5 +76,5 @@ export const getAllContentFromFirstColumn = (mdTable: string) => {
     const filteredColumns = columns.filter((col) => col !== '').map((col) => col.trim());
     return filteredColumns[0];
   });
-  return firstColumn.slice(2);
+  return firstColumn.slice(3);
 };

@@ -66,7 +66,7 @@
           <div>token总计：{{ totalUsage.total_tokens }}</div>
           <div>
             统计：{{
-              `${totalUsage.total_tokens}( ${totalUsage.prompt_tokens}+${totalUsage.completion_tokens} )`
+              `${totalUsage.total_tokens}(${totalUsage.prompt_tokens} + ${totalUsage.completion_tokens})`
             }}
           </div>
         </Space>
